@@ -1,0 +1,41 @@
+name: cabina
+description: "Cabina — a podcast player with an AI companion."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  audio_session: ^0.1.21 # Audio streaming
+  bloc: ^8.1.4 # State management
+  bloc_concurrency: ^0.2.5
+  cached_network_image: ^3.4.1 # Images
+  cupertino_icons: ^1.0.8
+  equatable: ^2.0.7
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6
+  go_router: ^14.6.2 # Routing
+  hive: ^2.2.3 # Local persistence
+  hive_flutter: ^1.1.0
+  http: ^1.2.2 # Networking & parsing
+  intl: ^0.19.0
+  json_annotation: ^4.9.0 # Models / serialization
+  just_audio: ^0.9.42
+  shared_preferences: ^2.3.3
+  uuid: ^4.5.1
+  very_good_analysis: ^10.2.0
+  xml: ^6.5.0
+
+dev_dependencies:
+  bloc_test: ^9.1.7
+  build_runner: ^2.4.13
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.9.0
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
