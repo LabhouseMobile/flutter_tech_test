@@ -16,11 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppDependencyInjection extends StatelessWidget {
   const AppDependencyInjection({
     required this.prefs,
+    required this.apiClient,
     required this.child,
     super.key,
   });
 
   final SharedPreferences prefs;
+  final ApiClient apiClient;
   final Widget child;
 
   @override
@@ -28,11 +30,7 @@ class AppDependencyInjection extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (_) => ApiClient(),
-        ),
-        RepositoryProvider(
-          create: (ctx) =>
-              ItunesSearchService(apiClient: ctx.read<ApiClient>()),
+          create: (ctx) => ItunesSearchService(apiClient: apiClient),
         ),
         RepositoryProvider(
           create: (ctx) => DiscoverRepository(
@@ -44,7 +42,7 @@ class AppDependencyInjection extends StatelessWidget {
               SearchRepository(searchService: ctx.read<ItunesSearchService>()),
         ),
         RepositoryProvider(
-          create: (ctx) => RssFeedService(apiClient: ctx.read<ApiClient>()),
+          create: (ctx) => RssFeedService(apiClient: apiClient),
         ),
         RepositoryProvider(
           create: (ctx) =>
