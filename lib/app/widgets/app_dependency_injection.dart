@@ -11,8 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Wires the object graph (services → repositories → app-scoped blocs) using
-/// `RepositoryProvider`/`BlocProvider`, the same manual DI approach used across
-/// the Labhouse apps. Route-scoped blocs (search, show detail, player) are
+/// `RepositoryProvider`/`BlocProvider`. Route-scoped blocs (search, show detail, player) are
 /// created in the router.
 class AppDependencyInjection extends StatelessWidget {
   const AppDependencyInjection({
@@ -32,8 +31,7 @@ class AppDependencyInjection extends StatelessWidget {
           create: (_) => ApiClient(),
         ),
         RepositoryProvider(
-          create: (ctx) =>
-              ItunesSearchService(apiClient: ctx.read<ApiClient>()),
+          create: (ctx) => ItunesSearchService(apiClient: ctx.read<ApiClient>()),
         ),
         RepositoryProvider(
           create: (ctx) => DiscoverRepository(
@@ -41,15 +39,13 @@ class AppDependencyInjection extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (ctx) =>
-              SearchRepository(searchService: ctx.read<ItunesSearchService>()),
+          create: (ctx) => SearchRepository(searchService: ctx.read<ItunesSearchService>()),
         ),
         RepositoryProvider(
           create: (ctx) => RssFeedService(apiClient: ctx.read<ApiClient>()),
         ),
         RepositoryProvider(
-          create: (ctx) =>
-              ShowDetailRepository(feedService: ctx.read<RssFeedService>()),
+          create: (ctx) => ShowDetailRepository(feedService: ctx.read<RssFeedService>()),
         ),
         RepositoryProvider(
           create: (_) => FavouritesRepository(prefs: prefs),

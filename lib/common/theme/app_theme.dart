@@ -5,7 +5,7 @@ part 'text_styles.dart';
 
 /// App-wide theming exposed as a [ThemeExtension] so widgets read semantic
 /// colors via `Theme.of(context).extension<AppTheme>()!` instead of hard-coded
-/// values. Mirrors the pattern used across the Labhouse apps.
+/// values.
 class AppTheme extends ThemeExtension<AppTheme> {
   factory AppTheme({required bool isDark}) =>
       isDark ? AppTheme._dark() : AppTheme._light();
@@ -22,26 +22,26 @@ class AppTheme extends ThemeExtension<AppTheme> {
   });
 
   factory AppTheme._light() => const AppTheme._(
-        primary: AppColors.violet,
-        onPrimary: AppColors.white,
-        background: AppColors.white,
-        surface: AppColors.paleGrey,
-        foreground: AppColors.ink,
-        foregroundSoft: AppColors.slate,
-        error: AppColors.red,
-        brightness: Brightness.light,
-      );
+    primary: AppColors.violet,
+    onPrimary: AppColors.white,
+    background: AppColors.white,
+    surface: AppColors.paleGrey,
+    foreground: AppColors.ink,
+    foregroundSoft: AppColors.slate,
+    error: AppColors.red,
+    brightness: Brightness.light,
+  );
 
   factory AppTheme._dark() => const AppTheme._(
-        primary: AppColors.violetLight,
-        onPrimary: AppColors.white,
-        background: AppColors.night,
-        surface: AppColors.nightSoft,
-        foreground: AppColors.white,
-        foregroundSoft: AppColors.fog,
-        error: AppColors.red,
-        brightness: Brightness.dark,
-      );
+    primary: AppColors.violetLight,
+    onPrimary: AppColors.white,
+    background: AppColors.night,
+    surface: AppColors.nightSoft,
+    foreground: AppColors.white,
+    foregroundSoft: AppColors.fog,
+    error: AppColors.red,
+    brightness: Brightness.dark,
+  );
 
   final Color primary;
   final Color onPrimary;
