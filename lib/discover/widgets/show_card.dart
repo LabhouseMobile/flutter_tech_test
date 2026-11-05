@@ -15,8 +15,11 @@ class ShowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
-    final isFavourite =
-        context.watch<DiscoverCubit>().state.favouriteIds.contains(podcast.id);
+    final isFavourite = context
+        .watch<DiscoverCubit>()
+        .state
+        .favouriteIds
+        .contains(podcast.id);
 
     return GestureDetector(
       onTap: onTap,
@@ -27,15 +30,15 @@ class ShowCard extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: PosterImage(url: podcast.artworkUrl!),
+                  child: PosterImage(url: podcast.artworkUrl),
                 ),
                 Positioned(
                   top: 6,
                   right: 6,
                   child: GestureDetector(
-                    onTap: () => context
-                        .read<DiscoverCubit>()
-                        .toggleFavourite(podcast.id),
+                    onTap: () => context.read<DiscoverCubit>().toggleFavourite(
+                      podcast.id,
+                    ),
                     child: CircleAvatar(
                       radius: 16,
                       backgroundColor: Colors.black.withValues(alpha: 0.45),
