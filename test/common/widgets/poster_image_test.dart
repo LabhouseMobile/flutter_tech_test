@@ -1,5 +1,6 @@
 import 'package:cabina/common/theme/app_theme.dart';
 import 'package:cabina/common/widgets/poster_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,7 +23,7 @@ void main() {
         await pumpPoster(tester, null);
 
         expect(find.byIcon(Icons.podcasts), findsOneWidget);
-        expect(find.byType(Image), findsNothing);
+        expect(find.byType(CachedNetworkImage), findsNothing);
       },
     );
 
@@ -33,7 +34,7 @@ void main() {
       (tester) async {
         await pumpPoster(tester, 'https://example.com/artwork.jpg');
 
-        expect(find.byType(Image), findsOneWidget);
+        expect(find.byType(CachedNetworkImage), findsOneWidget);
         expect(find.byIcon(Icons.podcasts), findsNothing);
       },
     );
