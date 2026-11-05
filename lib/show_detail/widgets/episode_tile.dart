@@ -16,8 +16,8 @@ class EpisodeTile extends StatelessWidget {
     final published = episode.publishedAt;
     final meta = [
       if (published != null) DateFormat.yMMMd().format(published),
-      if (episode.duration != null && episode.duration! > Duration.zero)
-        episode.duration!.human,
+      if (episode.duration case final duration? when duration > Duration.zero)
+        duration.human,
     ].join(' · ');
 
     return InkWell(
@@ -40,9 +40,12 @@ class EpisodeTile extends StatelessWidget {
                   ),
                   if (meta.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Text(meta,
-                        style: AppTextStyles.caption
-                            .copyWith(color: theme.foregroundSoft)),
+                    Text(
+                      meta,
+                      style: AppTextStyles.caption.copyWith(
+                        color: theme.foregroundSoft,
+                      ),
+                    ),
                   ],
                 ],
               ),
