@@ -21,9 +21,11 @@ class ShowDetailBloc extends Bloc<ShowDetailEvent, ShowDetailState> {
     ShowDetailRequested event,
     Emitter<ShowDetailState> emit,
   ) async {
-    // Uses the constructor instead of copyWith so errorMessage resets to null
     emit(
-      ShowDetailState(status: ShowDetailStatus.loading, detail: state.detail),
+      state.copyWith(
+        status: ShowDetailStatus.loading,
+        clearError: true,
+      ),
     );
 
     try {

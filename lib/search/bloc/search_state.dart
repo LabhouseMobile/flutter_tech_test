@@ -20,12 +20,13 @@ class SearchState extends Equatable {
     String? query,
     List<Podcast>? results,
     String? errorMessage,
+    bool clearError = false,
   }) {
     return SearchState(
       status: status ?? this.status,
       query: query ?? this.query,
       results: results ?? this.results,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 

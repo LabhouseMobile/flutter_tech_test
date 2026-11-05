@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cabina/player/bloc/audio_player_bloc.dart';
 import 'package:cabina/player/data/audio_player_repository.dart';
+import 'package:cabina/player/models/player_args.dart';
 import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
+import 'package:cabina/show_detail/models/episode.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -70,6 +72,48 @@ void main() {
 
         expect(bloc.isClosed, isTrue);
       },
+    );
+  });
+
+  const episode = Episode(
+    guid: 'guid-1',
+    title: 'Episode 1',
+    audioUrl: 'https://example.com/audio.mp3',
+    duration: Duration(minutes: 5),
+  );
+  const args = PlayerArgs(
+    episode: episode,
+    podcastTitle: 'Podcast Title',
+  );
+
+  group('AudioPlayerBloc PlayerOpened', () {
+    blocTest<AudioPlayerBloc, AudioPlayerState>(
+      'GIVEN a previous error '
+      'WHEN PlayerOpened '
+      'THEN the loading state has no errorMessage',
+      build: () {
+        when(
+          () => repository.open(any()),
+        ).thenAnswer((_) async => const Duration(minutes: 5));
+        when(() => repository.play()).thenAnswer((_) async {});
+        return buildBloc();
+      },
+      seed: () => const AudioPlayerState(
+        status: PlayerStatus.error,
+        errorMessage: 'playback failed',
+      ),
+      act: (bloc) => bloc.add(const PlayerOpened(args)),
+      expect: () => const [
+        AudioPlayerState(
+          status: PlayerStatus.loading,
+          args: args,
+        ),
+        AudioPlayerState(
+          status: PlayerStatus.loading,
+          args: args,
+          position: PlayerPosition(total: Duration(minutes: 5)),
+        ),
+      ],
     );
   });
 }

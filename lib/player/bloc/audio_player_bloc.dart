@@ -40,7 +40,13 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     PlayerOpened event,
     Emitter<AudioPlayerState> emit,
   ) async {
-    emit(state.copyWith(status: PlayerStatus.loading, args: event.args));
+    emit(
+      state.copyWith(
+        status: PlayerStatus.loading,
+        args: event.args,
+        clearError: true,
+      ),
+    );
     try {
       final total = await _repository.open(event.args.episode.audioUrl);
       emit(

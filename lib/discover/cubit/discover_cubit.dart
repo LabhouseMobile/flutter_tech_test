@@ -27,7 +27,13 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   }
 
   Future<void> loadFeatured() async {
-    emit(const DiscoverState(status: DiscoverStatus.loading));
+    emit(
+      state.copyWith(
+        status: DiscoverStatus.loading,
+        podcasts: const [],
+        clearError: true,
+      ),
+    );
     try {
       final podcasts = await _discoverRepository.featured();
       emit(state.copyWith(status: DiscoverStatus.ready, podcasts: podcasts));
