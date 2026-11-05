@@ -51,7 +51,7 @@ the core app.
     (no key).
   - Show detail → the podcast's **RSS feed** (parsed with `package:xml`).
   - Audio → streamed with `just_audio`.
-  - Local persistence → `shared_preferences` / `hive`.
+  - Local persistence → `shared_preferences`.
 - **Models:** `json_serializable` + `equatable` + `copyWith` (run `build_runner`
   after changing an annotated model).
 - **Theming:** a `ThemeExtension` (`AppTheme`) — read colors via
