@@ -51,8 +51,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     try {
       final results = await _searchRepository.search(query);
       emit(state.copyWith(status: SearchStatus.ready, results: results));
-    } on CabinaException catch (e) {
-      emit(state.copyWith(status: SearchStatus.error, errorMessage: e.message));
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
+      emit(
+        state.copyWith(
+          status: SearchStatus.error,
+          errorMessage: CabinaException.messageOf(error),
+        ),
+      );
     }
   }
 }

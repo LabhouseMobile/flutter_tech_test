@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cabina/common/errors/exceptions.dart';
 import 'package:cabina/player/bloc/audio_player_bloc.dart';
 import 'package:cabina/player/data/audio_player_repository.dart';
 import 'package:cabina/player/models/player_args.dart';
@@ -114,6 +115,76 @@ void main() {
           position: PlayerPosition(total: Duration(minutes: 5)),
         ),
       ],
+    );
+
+    blocTest<AudioPlayerBloc, AudioPlayerState>(
+      'GIVEN the repository throws a CabinaException '
+      'WHEN PlayerOpened '
+      'THEN emits [loading, error] with the exception message',
+      build: () {
+        when(
+          () => repository.open(any()),
+        ).thenThrow(const CabinaPlayerException('corrupt file'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const PlayerOpened(args)),
+      errors: () => [isA<CabinaPlayerException>()],
+      expect: () => const [
+        AudioPlayerState(
+          status: PlayerStatus.loading,
+          args: args,
+        ),
+        AudioPlayerState(
+          status: PlayerStatus.error,
+          args: args,
+          errorMessage: 'corrupt file',
+        ),
+      ],
+    );
+
+    blocTest<AudioPlayerBloc, AudioPlayerState>(
+      'GIVEN the repository throws a StateError '
+      'WHEN PlayerOpened '
+      'THEN emits error with CabinaException.fallbackMessage',
+      build: () {
+        when(
+          () => repository.open(any()),
+        ).thenThrow(StateError('unexpected'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const PlayerOpened(args)),
+      errors: () => [isA<StateError>()],
+      expect: () => const [
+        AudioPlayerState(
+          status: PlayerStatus.loading,
+          args: args,
+        ),
+        AudioPlayerState(
+          status: PlayerStatus.error,
+          args: args,
+          errorMessage: CabinaException.fallbackMessage,
+        ),
+      ],
+    );
+  });
+
+  group('AudioPlayerBloc streams', () {
+    blocTest<AudioPlayerBloc, AudioPlayerState>(
+      'GIVEN the status stream emits an error '
+      'THEN it reaches errors',
+      build: buildBloc,
+      act: (_) => statusController.addError(StateError('status stream error')),
+      errors: () => [isA<StateError>()],
+    );
+
+    blocTest<AudioPlayerBloc, AudioPlayerState>(
+      'GIVEN the position stream emits an error '
+      'THEN it reaches errors',
+      build: buildBloc,
+      act: (_) => positionController.addError(
+        StateError('position stream error'),
+      ),
+      errors: () => [isA<StateError>()],
     );
   });
 }

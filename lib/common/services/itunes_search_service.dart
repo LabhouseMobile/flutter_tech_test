@@ -24,23 +24,39 @@ class ItunesSearchService {
     });
 
     final body = await _apiClient.getString(uri);
-    final decoded = jsonDecode(body) as Map<String, dynamic>;
-    final results = (decoded['results'] as List).cast<Map<String, dynamic>>();
-
-    // Only collections with a usable feed URL can be opened.
-    return results
-        .where((json) => (json['feedUrl'] as String?)?.isNotEmpty ?? false)
-        .map(Podcast.fromJson)
-        .toList();
+    return _decodeResults(
+      body,
+    ).where(_hasFeedUrl).map(_tryParse).nonNulls.toList();
   }
 
   Future<Podcast?> lookupById(int collectionId) async {
     final uri = Uri.https(_host, '/lookup', {'id': '$collectionId'});
     final body = await _apiClient.getString(uri);
-    final decoded = jsonDecode(body) as Map<String, dynamic>;
-    final results = (decoded['results'] as List).cast<Map<String, dynamic>>();
-    final match = results.where((j) => j['collectionId'] != null);
-    if (match.isEmpty) throw const ApiException('Podcast not found');
-    return Podcast.fromJson(match.first);
+    final podcast = _decodeResults(body).map(_tryParse).nonNulls.firstOrNull;
+    if (podcast == null) throw const ApiException('Podcast not found');
+    return podcast;
+  }
+
+  static bool _hasFeedUrl(Map<String, dynamic> json) =>
+      (json['feedUrl'] as String?)?.isNotEmpty ?? false;
+
+  List<Map<String, dynamic>> _decodeResults(String body) {
+    try {
+      final decoded = jsonDecode(body) as Map<String, dynamic>;
+      return (decoded['results'] as List)
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    } on Object catch (e) {
+      throw ApiException('Unexpected response from iTunes', cause: e);
+    }
+  }
+
+  /// Skips a malformed result instead of failing the whole response.
+  Podcast? _tryParse(Map<String, dynamic> json) {
+    try {
+      return Podcast.fromJson(json);
+    } on Object {
+      return null;
+    }
   }
 }

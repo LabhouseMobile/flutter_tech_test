@@ -85,12 +85,36 @@ void main() {
       },
       act: (bloc) => bloc.add(const SearchTermChanged('reply')),
       wait: settle,
+      errors: () => [isA<CabinaException>()],
       expect: () => [
         const SearchState(status: SearchStatus.loading, query: 'reply'),
         const SearchState(
           status: SearchStatus.error,
           query: 'reply',
           errorMessage: 'offline',
+        ),
+      ],
+    );
+
+    blocTest<SearchBloc, SearchState>(
+      'GIVEN the repository throws a StateError '
+      'WHEN search runs '
+      'THEN emits error with CabinaException.fallbackMessage',
+      build: () {
+        when(() => repository.search(any())).thenThrow(
+          StateError('unexpected'),
+        );
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const SearchTermChanged('reply')),
+      wait: settle,
+      errors: () => [isA<StateError>()],
+      expect: () => [
+        const SearchState(status: SearchStatus.loading, query: 'reply'),
+        const SearchState(
+          status: SearchStatus.error,
+          query: 'reply',
+          errorMessage: CabinaException.fallbackMessage,
         ),
       ],
     );

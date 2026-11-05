@@ -7,6 +7,12 @@ sealed class CabinaException implements Exception {
   final String message;
   final Object? cause;
 
+  static const fallbackMessage = 'Something went wrong';
+
+  /// The user-facing message for any [error].
+  static String messageOf(Object error) =>
+      error is CabinaException ? error.message : fallbackMessage;
+
   @override
   String toString() => message;
 }

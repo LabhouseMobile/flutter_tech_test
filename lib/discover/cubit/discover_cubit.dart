@@ -37,11 +37,12 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     try {
       final podcasts = await _discoverRepository.featured();
       emit(state.copyWith(status: DiscoverStatus.ready, podcasts: podcasts));
-    } on CabinaException catch (e) {
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
       emit(
         state.copyWith(
           status: DiscoverStatus.error,
-          errorMessage: e.message,
+          errorMessage: CabinaException.messageOf(error),
         ),
       );
     }

@@ -33,12 +33,12 @@ void main() {
   group('ShowDetailBloc', () {
     blocTest<ShowDetailBloc, ShowDetailState>(
       'GIVEN a podcast and the feed loads successfully '
-          'WHEN ShowDetailRequested is added '
-          'THEN emits [loading, ready] with the podcast detail '
-          'and loads the detail only once',
+      'WHEN ShowDetailRequested is added '
+      'THEN emits [loading, ready] with the podcast detail '
+      'and loads the detail only once',
       build: () {
         when(
-              () => repository.loadDetail(any()),
+          () => repository.loadDetail(any()),
         ).thenAnswer((_) async => detail);
         return buildBloc();
       },
@@ -54,15 +54,16 @@ void main() {
 
     blocTest<ShowDetailBloc, ShowDetailState>(
       'GIVEN a repository that throws a CabinaException '
-          'WHEN ShowDetailRequested is added '
-          'THEN emits [loading, error] with the exception message',
+      'WHEN ShowDetailRequested is added '
+      'THEN emits [loading, error] with the exception message',
       build: () {
         when(
-              () => repository.loadDetail(any()),
+          () => repository.loadDetail(any()),
         ).thenThrow(const NetworkException('offline'));
         return buildBloc();
       },
       act: (bloc) => bloc.add(const ShowDetailRequested(podcast)),
+      errors: () => [isA<CabinaException>()],
       expect: () => const [
         ShowDetailState(status: ShowDetailStatus.loading),
         ShowDetailState(
@@ -73,12 +74,33 @@ void main() {
     );
 
     blocTest<ShowDetailBloc, ShowDetailState>(
-      'GIVEN a previous error state and a feed that now loads successfully '
-          'WHEN ShowDetailRequested is added again '
-          'THEN emits [loading, ready] and clears the previous error message',
+      'GIVEN the repository throws a StateError '
+      'WHEN ShowDetailRequested is added '
+      'THEN emits error with CabinaException.fallbackMessage',
       build: () {
         when(
-              () => repository.loadDetail(any()),
+          () => repository.loadDetail(any()),
+        ).thenThrow(StateError('unexpected'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const ShowDetailRequested(podcast)),
+      errors: () => [isA<StateError>()],
+      expect: () => const [
+        ShowDetailState(status: ShowDetailStatus.loading),
+        ShowDetailState(
+          status: ShowDetailStatus.error,
+          errorMessage: CabinaException.fallbackMessage,
+        ),
+      ],
+    );
+
+    blocTest<ShowDetailBloc, ShowDetailState>(
+      'GIVEN a previous error state and a feed that now loads successfully '
+      'WHEN ShowDetailRequested is added again '
+      'THEN emits [loading, ready] and clears the previous error message',
+      build: () {
+        when(
+          () => repository.loadDetail(any()),
         ).thenAnswer((_) async => detail);
         return buildBloc();
       },

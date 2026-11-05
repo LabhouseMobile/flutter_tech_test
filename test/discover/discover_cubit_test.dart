@@ -94,11 +94,33 @@ void main() {
         return buildCubit();
       },
       act: (cubit) => cubit.loadFeatured(),
+      errors: () => [isA<CabinaException>()],
       expect: () => const [
         DiscoverState(status: DiscoverStatus.loading),
         DiscoverState(
           status: DiscoverStatus.error,
           errorMessage: 'offline',
+        ),
+      ],
+    );
+
+    blocTest<DiscoverCubit, DiscoverState>(
+      'GIVEN the repository throws a StateError '
+      'WHEN loadFeatured runs '
+      'THEN emits error with CabinaException.fallbackMessage',
+      build: () {
+        when(
+          () => discoverRepository.featured(),
+        ).thenThrow(StateError('unexpected'));
+        return buildCubit();
+      },
+      act: (cubit) => cubit.loadFeatured(),
+      errors: () => [isA<StateError>()],
+      expect: () => const [
+        DiscoverState(status: DiscoverStatus.loading),
+        DiscoverState(
+          status: DiscoverStatus.error,
+          errorMessage: CabinaException.fallbackMessage,
         ),
       ],
     );

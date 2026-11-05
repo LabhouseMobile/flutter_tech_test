@@ -31,11 +31,12 @@ class ShowDetailBloc extends Bloc<ShowDetailEvent, ShowDetailState> {
     try {
       final detail = await _repository.loadDetail(event.podcast);
       emit(state.copyWith(status: ShowDetailStatus.ready, detail: detail));
-    } on CabinaException catch (e) {
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
       emit(
         state.copyWith(
           status: ShowDetailStatus.error,
-          errorMessage: e.message,
+          errorMessage: CabinaException.messageOf(error),
         ),
       );
     }

@@ -25,9 +25,11 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
     _positionSub = _repository.positionStream.listen(
       (position) => add(PlayerPositionUpdated(position)),
+      onError: addError,
     );
     _statusSub = _repository.statusStream.listen(
       (status) => add(PlayerStatusUpdated(status)),
+      onError: addError,
     );
   }
 
@@ -55,9 +57,13 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
         ),
       );
       await _repository.play();
-    } on CabinaException catch (e) {
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
       emit(
-        state.copyWith(status: PlayerStatus.error, errorMessage: e.message),
+        state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: CabinaException.messageOf(error),
+        ),
       );
     }
   }
