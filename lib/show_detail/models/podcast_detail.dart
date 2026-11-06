@@ -20,6 +20,5 @@ class PodcastDetail extends Equatable {
   final String descriptionHtml;
 
   @override
-  List<Object?> get props =>
-      [podcastId, title, author, episodes, artworkUrl];
+  List<Object?> get props => [podcastId, title, author, episodes, artworkUrl];
 }

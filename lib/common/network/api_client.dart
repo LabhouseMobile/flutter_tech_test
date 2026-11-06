@@ -7,15 +7,16 @@ import 'package:http/http.dart' as http;
 /// and status failures onto the [CabinaException] hierarchy.
 class ApiClient {
   ApiClient({http.Client? client, this.timeout = const Duration(seconds: 20)})
-      : _client = client ?? http.Client();
+    : _client = client ?? http.Client();
 
   final http.Client _client;
   final Duration timeout;
 
   Future<String> getString(Uri uri, {Map<String, String>? headers}) async {
     try {
-      final response =
-          await _client.get(uri, headers: headers).timeout(timeout);
+      final response = await _client
+          .get(uri, headers: headers)
+          .timeout(timeout);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return response.body;
       }

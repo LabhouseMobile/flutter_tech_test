@@ -10,10 +10,10 @@ class HomePage extends StatefulWidget {
   static const routePath = '/';
 
   static GoRoute route() => GoRoute(
-        path: routePath,
-        name: routeName,
-        builder: (context, state) => const HomePage(),
-      );
+    path: routePath,
+    name: routeName,
+    builder: (context, state) => const HomePage(),
+  );
 
   @override
   State<HomePage> createState() => _HomePageState();

@@ -5,7 +5,8 @@ enum PlayerStatus {
   playing,
   paused,
   completed,
-  error;
+  error
+  ;
 
   bool get isPlaying => this == PlayerStatus.playing;
   bool get isBusy =>

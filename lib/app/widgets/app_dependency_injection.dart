@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Wires the object graph (services → repositories → app-scoped blocs) using
 /// `RepositoryProvider`/`BlocProvider`. Route-scoped blocs (search, show detail, player) are
-/// created in the router.
+/// created in each page's `route()`.
 class AppDependencyInjection extends StatelessWidget {
   const AppDependencyInjection({
     required this.prefs,

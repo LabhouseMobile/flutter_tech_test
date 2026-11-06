@@ -6,18 +6,18 @@ import 'package:just_audio/just_audio.dart';
 
 class JustAudioPlayerService implements IPlayerService {
   JustAudioPlayerService({AudioPlayer? player})
-      : _player = player ?? AudioPlayer();
+    : _player = player ?? AudioPlayer();
 
   final AudioPlayer _player;
 
   @override
   Stream<PlayerPosition> get positionStream => _player.positionStream.map(
-        (position) => PlayerPosition(
-          position: position,
-          buffered: _player.bufferedPosition,
-          total: _player.duration,
-        ),
-      );
+    (position) => PlayerPosition(
+      position: position,
+      buffered: _player.bufferedPosition,
+      total: _player.duration,
+    ),
+  );
 
   @override
   Stream<PlayerStatus> get statusStream =>
