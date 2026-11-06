@@ -17,11 +17,12 @@ class ShowDetailState extends Equatable {
     ShowDetailStatus? status,
     PodcastDetail? detail,
     String? errorMessage,
+    bool clearError = false,
   }) {
     return ShowDetailState(
       status: status ?? this.status,
       detail: detail ?? this.detail,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 

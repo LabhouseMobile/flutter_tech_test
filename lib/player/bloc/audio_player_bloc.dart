@@ -14,8 +14,8 @@ part 'audio_player_state.dart';
 
 class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
   AudioPlayerBloc({required AudioPlayerRepository repository})
-      : _repository = repository,
-        super(const AudioPlayerState()) {
+    : _repository = repository,
+      super(const AudioPlayerState()) {
     on<PlayerOpened>(_onOpened);
     on<PlayerPlayPauseToggled>(_onPlayPauseToggled);
     on<PlayerSeeked>(_onSeeked);
@@ -25,9 +25,11 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
     _positionSub = _repository.positionStream.listen(
       (position) => add(PlayerPositionUpdated(position)),
+      onError: addError,
     );
     _statusSub = _repository.statusStream.listen(
       (status) => add(PlayerStatusUpdated(status)),
+      onError: addError,
     );
   }
 
@@ -40,18 +42,29 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     PlayerOpened event,
     Emitter<AudioPlayerState> emit,
   ) async {
-    emit(state.copyWith(status: PlayerStatus.loading, args: event.args));
+    emit(
+      state.copyWith(
+        status: PlayerStatus.loading,
+        args: event.args,
+        clearError: true,
+      ),
+    );
     try {
       final total = await _repository.open(event.args.episode.audioUrl);
-      emit(state.copyWith(
-        position: PlayerPosition(total: total ?? event.args.episode.duration),
-      ));
+      emit(
+        state.copyWith(
+          position: PlayerPosition(total: total ?? event.args.episode.duration),
+        ),
+      );
       await _repository.play();
-    } on CabinaException catch (e) {
-      emit(state.copyWith(
-        status: PlayerStatus.error,
-        errorMessage: e.message,
-      ));
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
+      emit(
+        state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: CabinaException.messageOf(error),
+        ),
+      );
     }
   }
 
@@ -86,13 +99,15 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     Emitter<AudioPlayerState> emit,
   ) {
     final total = event.position.total ?? state.position.total;
-    emit(state.copyWith(
-      position: PlayerPosition(
-        position: event.position.position,
-        buffered: event.position.buffered,
-        total: total,
+    emit(
+      state.copyWith(
+        position: PlayerPosition(
+          position: event.position.position,
+          buffered: event.position.buffered,
+          total: total,
+        ),
       ),
-    ));
+    );
   }
 
   void _onStatusUpdated(
@@ -102,10 +117,16 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     emit(state.copyWith(status: event.status));
   }
 
+  /// Closes the bloc first so no new event reaches a disposed player, and
+  /// always disposes the repository this bloc owns, even if closing fails.
   @override
   Future<void> close() async {
     await _positionSub.cancel();
     await _statusSub.cancel();
-    return super.close();
+    try {
+      await super.close();
+    } finally {
+      await _repository.dispose();
+    }
   }
 }

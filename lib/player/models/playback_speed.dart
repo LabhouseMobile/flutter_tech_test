@@ -3,7 +3,8 @@ enum PlaybackSpeed {
   x1(1, '1×'),
   x1_25(1.25, '1.25×'),
   x1_5(1.5, '1.5×'),
-  x2(2, '2×');
+  x2(2, '2×')
+  ;
 
   const PlaybackSpeed(this.value, this.label);
 

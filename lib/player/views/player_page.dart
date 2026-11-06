@@ -21,19 +21,18 @@ class PlayerPage extends StatefulWidget {
   static const routePath = '/player';
 
   static GoRoute route() => GoRoute(
-        path: routePath,
-        name: routeName,
-        builder: (context, state) {
-          final args = state.extra! as PlayerArgs;
-          return BlocProvider(
-            create: (_) => AudioPlayerBloc(
-              repository:
-                  AudioPlayerRepository(service: JustAudioPlayerService()),
-            ),
-            child: PlayerPage(args: args),
-          );
-        },
+    path: routePath,
+    name: routeName,
+    builder: (context, state) {
+      final args = state.extra! as PlayerArgs;
+      return BlocProvider(
+        create: (_) => AudioPlayerBloc(
+          repository: AudioPlayerRepository(service: JustAudioPlayerService()),
+        ),
+        child: PlayerPage(args: args),
       );
+    },
+  );
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
@@ -54,7 +53,7 @@ class _PlayerPageState extends State<PlayerPage> {
       body: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
         builder: (context, state) {
           if (state.status == PlayerStatus.error) {
-            return ErrorView(message: state.errorMessage ?? 'Playback failed');
+            return ErrorView(message: state.errorMessage!);
           }
           final args = state.args ?? widget.args;
           return Padding(
@@ -64,16 +63,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 const Spacer(),
                 AspectRatio(
                   aspectRatio: 1,
-                  child: args.artworkUrl == null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            color: theme.surface,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(Icons.podcasts,
-                              size: 64, color: theme.foregroundSoft),
-                        )
-                      : PosterImage(url: args.artworkUrl!, borderRadius: 20),
+                  child: PosterImage(url: args.artworkUrl, borderRadius: 20),
                 ),
                 const SizedBox(height: 28),
                 Text(
@@ -88,8 +78,9 @@ class _PlayerPageState extends State<PlayerPage> {
                 const SizedBox(height: 6),
                 Text(
                   args.podcastTitle,
-                  style: AppTextStyles.caption
-                      .copyWith(color: theme.foregroundSoft),
+                  style: AppTextStyles.caption.copyWith(
+                    color: theme.foregroundSoft,
+                  ),
                 ),
                 const Spacer(),
                 SeekBar(position: state.position),

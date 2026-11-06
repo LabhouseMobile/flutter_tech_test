@@ -35,43 +35,42 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.appTheme;
     final items = LibraryStore.instance.items;
     return Scaffold(
       appBar: AppBar(title: const Text('Library', style: AppTextStyles.title)),
       body: _loading
           ? const LoaderView()
           : items.isEmpty
-              ? const EmptyView(
-                  message: 'Subscribe to a podcast to see it here',
-                  icon: Icons.library_music_outlined,
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: SizedBox(
-                        width: 52,
-                        height: 52,
-                        child: item.artworkUrl == null
-                            ? Container(color: theme.surface)
-                            : PosterImage(url: item.artworkUrl!, size: 52),
-                      ),
-                      title: Text(item.title,
-                          maxLines: 1, overflow: TextOverflow.ellipsis),
-                      subtitle: Text(item.author,
-                          maxLines: 1, overflow: TextOverflow.ellipsis),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.remove_circle_outline),
-                        onPressed: () => _unsubscribe(item.id),
-                      ),
-                    );
-                  },
-                ),
+          ? const EmptyView(
+              message: 'Subscribe to a podcast to see it here',
+              icon: Icons.library_music_outlined,
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: PosterImage(url: item.artworkUrl, size: 52),
+                  title: Text(
+                    item.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    item.author,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () => _unsubscribe(item.id),
+                  ),
+                );
+              },
+            ),
     );
   }
 }

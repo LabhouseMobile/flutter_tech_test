@@ -46,3 +46,9 @@ app.*.map.json
 
 # FVM (Flutter Version Management) — commit .fvmrc, ignore the local SDK cache
 .fvm/
+
+# IntelliJ Idea mcp configs.
+.mcp.json
+
+# Claude Code local state.
+.claude/

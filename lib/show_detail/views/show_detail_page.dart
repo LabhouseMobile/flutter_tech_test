@@ -58,10 +58,10 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
               return const LoaderView();
             case ShowDetailStatus.error:
               return ErrorView(
-                message: state.errorMessage ?? 'Could not load this podcast',
-                onRetry: () => context
-                    .read<ShowDetailBloc>()
-                    .add(ShowDetailRequested(widget.podcast)),
+                message: state.errorMessage!,
+                onRetry: () => context.read<ShowDetailBloc>().add(
+                  ShowDetailRequested(widget.podcast),
+                ),
               );
             case ShowDetailStatus.ready:
               return _DetailContent(
@@ -97,13 +97,7 @@ class _DetailContent extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 96,
-                    height: 96,
-                    child: detail.artworkUrl == null
-                        ? Container(color: theme.surface)
-                        : PosterImage(url: detail.artworkUrl!, size: 96),
-                  ),
+                  PosterImage(url: detail.artworkUrl, size: 96),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

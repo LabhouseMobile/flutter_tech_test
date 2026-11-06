@@ -15,8 +15,10 @@ class SeekBar extends StatelessWidget {
     final theme = context.appTheme;
     final total = position.total ?? Duration.zero;
     final maxMs = total.inMilliseconds.toDouble();
-    final valueMs =
-        position.position.inMilliseconds.toDouble().clamp(0.0, maxMs);
+    final valueMs = position.position.inMilliseconds.toDouble().clamp(
+      0.0,
+      maxMs,
+    );
 
     return Column(
       children: [
@@ -25,9 +27,9 @@ class SeekBar extends StatelessWidget {
           max: maxMs == 0 ? 1 : maxMs,
           activeColor: theme.primary,
           onChanged: (value) {
-            context
-                .read<AudioPlayerBloc>()
-                .add(PlayerSeeked(Duration(milliseconds: value.round())));
+            context.read<AudioPlayerBloc>().add(
+              PlayerSeeked(Duration(milliseconds: value.round())),
+            );
           },
         ),
         Padding(

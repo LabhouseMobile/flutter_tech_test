@@ -15,14 +15,14 @@ class SearchPage extends StatelessWidget {
   static const routePath = '/search';
 
   static GoRoute route() => GoRoute(
-        path: routePath,
-        name: routeName,
-        builder: (context, state) => BlocProvider(
-          create: (ctx) =>
-              SearchBloc(searchRepository: ctx.read<SearchRepository>()),
-          child: const SearchPage(),
-        ),
-      );
+    path: routePath,
+    name: routeName,
+    builder: (context, state) => BlocProvider(
+      create: (ctx) =>
+          SearchBloc(searchRepository: ctx.read<SearchRepository>()),
+      child: const SearchPage(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class SearchPage extends StatelessWidget {
             border: InputBorder.none,
             hintStyle: AppTextStyles.body.copyWith(color: theme.foregroundSoft),
           ),
-            onChanged: (value) =>
-                context.read<SearchBloc>().add(SearchTermChanged(value)),
+          onChanged: (value) =>
+              context.read<SearchBloc>().add(SearchTermChanged(value)),
         ),
       ),
       body: BlocBuilder<SearchBloc, SearchState>(
@@ -52,7 +52,7 @@ class SearchPage extends StatelessWidget {
             case SearchStatus.loading:
               return const LoaderView();
             case SearchStatus.error:
-              return ErrorView(message: state.errorMessage ?? 'Search failed');
+              return ErrorView(message: state.errorMessage!);
             case SearchStatus.ready:
               if (state.results.isEmpty) {
                 return EmptyView(message: 'No results for "${state.query}"');

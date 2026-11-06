@@ -13,9 +13,9 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   DiscoverCubit({
     required DiscoverRepository discoverRepository,
     required FavouritesRepository favouritesRepository,
-  })  : _discoverRepository = discoverRepository,
-        _favouritesRepository = favouritesRepository,
-        super(const DiscoverState()) {
+  }) : _discoverRepository = discoverRepository,
+       _favouritesRepository = favouritesRepository,
+       super(const DiscoverState()) {
     _restoreFavourites();
   }
 
@@ -27,18 +27,22 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   }
 
   Future<void> loadFeatured() async {
-    emit(state.copyWith(status: DiscoverStatus.loading));
+    emit(
+      state.copyWith(
+        status: DiscoverStatus.loading,
+        podcasts: const [],
+        clearError: true,
+      ),
+    );
     try {
       final podcasts = await _discoverRepository.featured();
-      emit(state.copyWith(
-        status: DiscoverStatus.ready,
-        podcasts: podcasts,
-      ));
-    } on CabinaException catch (e) {
+      emit(state.copyWith(status: DiscoverStatus.ready, podcasts: podcasts));
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
       emit(
         state.copyWith(
           status: DiscoverStatus.error,
-          errorMessage: e.message,
+          errorMessage: CabinaException.messageOf(error),
         ),
       );
     }

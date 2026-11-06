@@ -10,8 +10,8 @@ part 'show_detail_state.dart';
 
 class ShowDetailBloc extends Bloc<ShowDetailEvent, ShowDetailState> {
   ShowDetailBloc({required ShowDetailRepository repository})
-      : _repository = repository,
-        super(const ShowDetailState()) {
+    : _repository = repository,
+      super(const ShowDetailState()) {
     on<ShowDetailRequested>(_onRequested);
   }
 
@@ -21,15 +21,24 @@ class ShowDetailBloc extends Bloc<ShowDetailEvent, ShowDetailState> {
     ShowDetailRequested event,
     Emitter<ShowDetailState> emit,
   ) async {
-    emit(state.copyWith(status: ShowDetailStatus.loading));
+    emit(
+      state.copyWith(
+        status: ShowDetailStatus.loading,
+        clearError: true,
+      ),
+    );
+
     try {
       final detail = await _repository.loadDetail(event.podcast);
       emit(state.copyWith(status: ShowDetailStatus.ready, detail: detail));
-    } on CabinaException catch (e) {
-      emit(state.copyWith(
-        status: ShowDetailStatus.error,
-        errorMessage: e.message,
-      ));
+    } on Object catch (error, stackTrace) {
+      addError(error, stackTrace);
+      emit(
+        state.copyWith(
+          status: ShowDetailStatus.error,
+          errorMessage: CabinaException.messageOf(error),
+        ),
+      );
     }
   }
 }

@@ -34,8 +34,10 @@ class PlayerControls extends StatelessWidget {
       children: [
         TextButton(
           onPressed: () => bloc.add(PlayerSpeedChanged(speed.next)),
-          child: Text(speed.label,
-              style: AppTextStyles.label.copyWith(color: theme.foreground)),
+          child: Text(
+            speed.label,
+            style: AppTextStyles.label.copyWith(color: theme.foreground),
+          ),
         ),
         IconButton(
           iconSize: 34,

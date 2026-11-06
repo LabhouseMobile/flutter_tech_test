@@ -21,13 +21,14 @@ class AudioPlayerState extends Equatable {
     PlaybackSpeed? speed,
     PlayerArgs? args,
     String? errorMessage,
+    bool clearError = false,
   }) {
     return AudioPlayerState(
       status: status ?? this.status,
       position: position ?? this.position,
       speed: speed ?? this.speed,
       args: args ?? this.args,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 

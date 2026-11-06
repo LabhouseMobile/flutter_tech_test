@@ -19,6 +19,5 @@ class FavouritesRepository {
     return decoded.cast<int>();
   }
 
-  Future<void> save(List<int> ids) =>
-      _prefs.setString(_key, jsonEncode(ids));
+  Future<void> save(List<int> ids) => _prefs.setString(_key, jsonEncode(ids));
 }

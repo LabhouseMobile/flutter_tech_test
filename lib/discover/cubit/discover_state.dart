@@ -20,12 +20,13 @@ class DiscoverState extends Equatable {
     List<Podcast>? podcasts,
     List<int>? favouriteIds,
     String? errorMessage,
+    bool clearError = false,
   }) {
     return DiscoverState(
       status: status ?? this.status,
       podcasts: podcasts ?? this.podcasts,
       favouriteIds: favouriteIds ?? this.favouriteIds,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 

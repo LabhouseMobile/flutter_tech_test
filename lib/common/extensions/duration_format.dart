@@ -9,11 +9,12 @@ extension DurationFormat on Duration {
     return h > 0 ? '$h:$mm:$ss' : '$mm:$ss';
   }
 
-  /// Human label such as `1h 2m` or `43m`.
+  /// Human label such as `1h 2m` or `43m`; anything under a minute is `<1m`.
   String get human {
     final h = inHours;
     final m = inMinutes.remainder(60);
     if (h > 0) return '${h}h ${m}m';
-    return '${m}m';
+    if (m > 0) return '${m}m';
+    return '<1m';
   }
 }
