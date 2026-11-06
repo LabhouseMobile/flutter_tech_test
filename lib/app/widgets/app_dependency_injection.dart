@@ -4,6 +4,8 @@ import 'package:cabina/common/storage/local_storage.dart';
 import 'package:cabina/discover/cubit/discover_cubit.dart';
 import 'package:cabina/discover/data/discover_repository.dart';
 import 'package:cabina/discover/data/favourites_repository.dart';
+import 'package:cabina/library/cubit/library_cubit.dart';
+import 'package:cabina/library/data/library_repository.dart';
 import 'package:cabina/search/data/search_repository.dart';
 import 'package:cabina/show_detail/data/parsers/rss_feed_parser.dart';
 import 'package:cabina/show_detail/data/services/rss_feed_service.dart';
@@ -54,6 +56,9 @@ class AppDependencyInjection extends StatelessWidget {
         RepositoryProvider(
           create: (_) => FavouritesRepository(localStorage: localStorage),
         ),
+        RepositoryProvider(
+          create: (_) => LibraryRepository(localStorage: localStorage),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -61,6 +66,11 @@ class AppDependencyInjection extends StatelessWidget {
             create: (ctx) => DiscoverCubit(
               discoverRepository: ctx.read<DiscoverRepository>(),
               favouritesRepository: ctx.read<FavouritesRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => LibraryCubit(
+              libraryRepository: ctx.read<LibraryRepository>(),
             ),
           ),
         ],

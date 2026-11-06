@@ -2,6 +2,7 @@ import 'package:cabina/common/theme/app_theme.dart';
 import 'package:cabina/common/widgets/poster_image.dart';
 import 'package:cabina/common/widgets/status_views.dart';
 import 'package:cabina/discover/models/podcast.dart';
+import 'package:cabina/library/models/subscribed_podcast.dart';
 import 'package:cabina/library/widgets/subscribe_button.dart';
 import 'package:cabina/player/models/player_args.dart';
 import 'package:cabina/player/views/player_page.dart';
@@ -113,10 +114,13 @@ class _DetailContent extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         SubscribeButton(
-                          id: podcast.id,
-                          title: detail.title,
-                          author: detail.author,
-                          artworkUrl: detail.artworkUrl,
+                          podcast: SubscribedPodcast(
+                            id: podcast.id,
+                            title: detail.title,
+                            author: detail.author,
+                            feedUrl: podcast.feedUrl,
+                            artworkUrl: detail.artworkUrl,
+                          ),
                         ),
                       ],
                     ),
