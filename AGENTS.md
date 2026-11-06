@@ -11,7 +11,7 @@ library of subscribed shows.
 ## Project map
 ```
 lib/
-  bootstrap.dart   Bloc observer, SharedPreferences, ApiClient, runApp
+  bootstrap.dart   Bloc observer, LocalStorage, ApiClient, runApp
   app/             CabinaApp + AppDependencyInjection (app-scoped providers)
   common/          Shared code. Never imports a feature
     errors/        CabinaException hierarchy
@@ -20,6 +20,7 @@ lib/
     observers/     AppBlocObserver: logs whatever blocs pass to addError
     parsers/       ItunesDurationParser, Rfc822DateParser
     services/      ItunesSearchService (shared by discover and search)
+    storage/       LocalStorage: async key/value, failures mapped to StorageException
     theme/         AppTheme (ThemeExtension, context.appTheme), AppColors, AppTextStyles
     widgets/       PosterImage, LoaderView, ErrorView, EmptyView
   discover/        Featured grid + favourites (DiscoverCubit)
@@ -109,12 +110,12 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 | `library/`       | Singleton `LibraryStore`, no repository or cubit, flat folder                                                                                                        |
 | `home/`          | Flat folder                                                                                                                                                          |
 | `common/router/` | `RouterBuilder` in `common/`, so `common/` imports every feature page. Target: `lib/router/`                                                                         |
-| `discover/`      | `DiscoverCubit` also owns favourites; `toggleFavourite` mutates state in place                                                                                       |
+| `discover/`      | `DiscoverCubit` also owns favourites                                                                                                                                 |
 | `player/`        | `IPlayerService` + pass-through `AudioPlayerRepository`; `route()` builds the service inline; handlers without `try`; awaited `play()`; files named `audio_player_*` |
 | `show_detail/`   | `ShowDetailBloc` with a single event and no transformer                                                                                                              |
 | Shared code      | `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`, `SubscribeButton` live in a feature but are used by others; `ItunesSearchService` imports discover        |
 | DI               | Repositories of route-scoped blocs registered app-scoped                                                                                                             |
-| Persistence      | `SharedPreferences` used directly, no local service wrapping it                                                                                                      |
+| Persistence      | `LibraryStore` uses `SharedPreferences` directly instead of `LocalStorage`                                                                                           |
 | Models           | Fields left out of `props`                                                                                                                                           |
 | Pages, DI        | Unused callback params not named `_`                                                                                                                                 |
 | `test/`          | Bloc and cubit tests at the feature root, not under `bloc/` or `cubit/`                                                                                              |

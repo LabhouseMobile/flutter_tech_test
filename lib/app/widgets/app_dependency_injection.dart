@@ -1,5 +1,6 @@
 import 'package:cabina/common/network/api_client.dart';
 import 'package:cabina/common/services/itunes_search_service.dart';
+import 'package:cabina/common/storage/local_storage.dart';
 import 'package:cabina/discover/cubit/discover_cubit.dart';
 import 'package:cabina/discover/data/discover_repository.dart';
 import 'package:cabina/discover/data/favourites_repository.dart';
@@ -9,20 +10,19 @@ import 'package:cabina/show_detail/data/services/rss_feed_service.dart';
 import 'package:cabina/show_detail/data/show_detail_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Wires the object graph (services → repositories → app-scoped blocs) using
 /// `RepositoryProvider`/`BlocProvider`. Route-scoped blocs (search, show detail, player) are
 /// created in each page's `route()`.
 class AppDependencyInjection extends StatelessWidget {
   const AppDependencyInjection({
-    required this.prefs,
+    required this.localStorage,
     required this.apiClient,
     required this.child,
     super.key,
   });
 
-  final SharedPreferences prefs;
+  final LocalStorage localStorage;
   final ApiClient apiClient;
   final Widget child;
 
@@ -52,7 +52,7 @@ class AppDependencyInjection extends StatelessWidget {
           ),
         ),
         RepositoryProvider(
-          create: (_) => FavouritesRepository(prefs: prefs),
+          create: (_) => FavouritesRepository(localStorage: localStorage),
         ),
       ],
       child: MultiBlocProvider(
