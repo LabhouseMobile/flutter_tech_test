@@ -44,7 +44,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               return const LoaderView();
             case DiscoverStatus.error:
               return ErrorView(
-                message: state.errorMessage ?? 'Something went wrong',
+                message: state.errorMessage!,
                 onRetry: () => context.read<DiscoverCubit>().loadFeatured(),
               );
             case DiscoverStatus.ready:

@@ -58,7 +58,7 @@ class _ShowDetailPageState extends State<ShowDetailPage> {
               return const LoaderView();
             case ShowDetailStatus.error:
               return ErrorView(
-                message: state.errorMessage ?? 'Could not load this podcast',
+                message: state.errorMessage!,
                 onRetry: () => context.read<ShowDetailBloc>().add(
                   ShowDetailRequested(widget.podcast),
                 ),

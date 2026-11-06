@@ -52,7 +52,7 @@ class SearchPage extends StatelessWidget {
             case SearchStatus.loading:
               return const LoaderView();
             case SearchStatus.error:
-              return ErrorView(message: state.errorMessage ?? 'Search failed');
+              return ErrorView(message: state.errorMessage!);
             case SearchStatus.ready:
               if (state.results.isEmpty) {
                 return EmptyView(message: 'No results for "${state.query}"');

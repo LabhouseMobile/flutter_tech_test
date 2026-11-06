@@ -53,7 +53,7 @@ class _PlayerPageState extends State<PlayerPage> {
       body: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
         builder: (context, state) {
           if (state.status == PlayerStatus.error) {
-            return ErrorView(message: state.errorMessage ?? 'Playback failed');
+            return ErrorView(message: state.errorMessage!);
           }
           final args = state.args ?? widget.args;
           return Padding(
