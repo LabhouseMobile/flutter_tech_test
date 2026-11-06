@@ -107,7 +107,7 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 
 | Where            | Pattern not to copy                                                                                                                                                  |
 |------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `library/`       | Singleton `LibraryStore`, no repository or cubit, flat folder                                                                                                        |
+| `library/`       | Singleton `LibraryStore`, no repository or cubit                                                                                                                     |
 | `home/`          | Flat folder                                                                                                                                                          |
 | `common/router/` | `RouterBuilder` in `common/`, so `common/` imports every feature page. Target: `lib/router/`                                                                         |
 | `discover/`      | `DiscoverCubit` also owns favourites                                                                                                                                 |

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cabina/library/library_store.dart';
-import 'package:cabina/library/subscribed_podcast.dart';
+import 'package:cabina/library/models/subscribed_podcast.dart';
 import 'package:flutter/material.dart';
 
 // Toggles a Library subscription. Talks straight to LibraryStore and rebuilds

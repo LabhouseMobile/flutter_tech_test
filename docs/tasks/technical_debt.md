@@ -17,7 +17,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 ## Library
 - ❌ Subscribing a new podcast and going back, library is not updated. `LibraryPage` loads once inside the `IndexedStack`
 - ❌ Library item tap doesn't open the podcast detail 
-- ❌ Singleton `LibraryStore` on raw prefs, no repository or cubit, flat folder
+- 🟡 Singleton `LibraryStore` on raw prefs, no repository or cubit, flat folder. Folders done (`views/`, `models/`), the store is still there
 - ❌ `SubscribeButton` lives in library, only `show_detail` renders it
 
 ## Discover & favourites

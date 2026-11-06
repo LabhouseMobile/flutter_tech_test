@@ -1,4 +1,4 @@
-import 'package:cabina/library/subscribed_podcast.dart';
+import 'package:cabina/library/models/subscribed_podcast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Quick-and-dirty persistence for the Library feature.
