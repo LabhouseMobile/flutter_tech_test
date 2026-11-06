@@ -21,10 +21,10 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 - ❌ `SubscribeButton` lives in library, only `show_detail` renders it
 
 ## Discover & favourites
-- ❌ Favourite tap on the listing not working. `toggleFavourite` mutates `favouriteIds` `const []` throws, and Equatable skips the emit
+- ✅ Favourite tap on the listing not working. `toggleFavourite` mutates `favouriteIds` `const []` throws, and Equatable skips the emit → a new list on every toggle, emitted after the save
 - ✅ Corrupt favourites in prefs → crash on startup → `DiscoverCubit.restoreFavourites` loads them as `[]`
 - ❌ `DiscoverCubit` holds 2 features, discover + favourites → `FavouritesCubit`
-- ❌ `unawaited(save)` drops the error in discover_cubit
+- ✅ `unawaited(save)` drops the error in discover_cubit → `toggleFavourite` awaits the save, and a failure keeps the list and shows a SnackBar
 - ❌ `ShowCard` uses `context.watch`, every card rebuilds on any Discover change
 - ❌ Heart tap target is 32dp, under 48
 - ❌ Grid heights uneven with 2-line titles
@@ -74,6 +74,6 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 - ❌ Private named params (`required this._repository`) not adopted
 - 🟡 Dead code. `hive` and `cupertino_icons` removed. `DiscoverRepository.search`, `ApiClient.dispose`, `PlayerPosition.progress`, `ApiException.isRateLimited` and `ItunesSearchService.lookupById` still unused
 - ❌ Bloc and cubit tests at the feature root, not under `bloc/` or `cubit/`
-- ❌ Hardcoded colors outside the theme: `show_card.dart:44,48`, `player_controls.dart:77`
+- ❌ Hardcoded colors outside the theme: `show_card.dart:46,50`, `player_controls.dart:77`
 - ❌ `uuid` declared but unused, for an upcoming feature. Don't remove
 - ✅ No l10n. English only, by decision

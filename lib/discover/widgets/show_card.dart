@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cabina/common/theme/app_theme.dart';
 import 'package:cabina/common/widgets/poster_image.dart';
 import 'package:cabina/discover/cubit/discover_cubit.dart';
@@ -36,8 +38,8 @@ class ShowCard extends StatelessWidget {
                   top: 6,
                   right: 6,
                   child: GestureDetector(
-                    onTap: () => context.read<DiscoverCubit>().toggleFavourite(
-                      podcast.id,
+                    onTap: () => unawaited(
+                      context.read<DiscoverCubit>().toggleFavourite(podcast.id),
                     ),
                     child: CircleAvatar(
                       radius: 16,

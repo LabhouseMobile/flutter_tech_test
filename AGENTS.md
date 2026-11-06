@@ -110,7 +110,7 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 | `library/`       | Singleton `LibraryStore`, no repository or cubit, flat folder                                                                                                        |
 | `home/`          | Flat folder                                                                                                                                                          |
 | `common/router/` | `RouterBuilder` in `common/`, so `common/` imports every feature page. Target: `lib/router/`                                                                         |
-| `discover/`      | `DiscoverCubit` also owns favourites; `toggleFavourite` mutates state in place                                                                                       |
+| `discover/`      | `DiscoverCubit` also owns favourites                                                                                                                                 |
 | `player/`        | `IPlayerService` + pass-through `AudioPlayerRepository`; `route()` builds the service inline; handlers without `try`; awaited `play()`; files named `audio_player_*` |
 | `show_detail/`   | `ShowDetailBloc` with a single event and no transformer                                                                                                              |
 | Shared code      | `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`, `SubscribeButton` live in a feature but are used by others; `ItunesSearchService` imports discover        |
