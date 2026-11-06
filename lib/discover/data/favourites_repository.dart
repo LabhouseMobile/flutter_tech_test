@@ -1,23 +1,26 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cabina/common/storage/local_storage.dart';
 
 /// Persists the set of "liked" podcast ids. Favourites are a lightweight
 /// bookmark from the discover/search screens (distinct from Library
 /// subscriptions).
 class FavouritesRepository {
-  FavouritesRepository({required SharedPreferences prefs}) : _prefs = prefs;
+  FavouritesRepository({required LocalStorage localStorage})
+    : _localStorage = localStorage;
 
-  final SharedPreferences _prefs;
+  final LocalStorage _localStorage;
 
   static const _key = 'favourite_podcast_ids';
 
-  List<int> load() {
-    final raw = _prefs.getString(_key);
+  /// The saved ids. Throws when the stored value isn't a JSON list of ints.
+  Future<List<int>> load() async {
+    final raw = await _localStorage.read(_key);
     if (raw == null || raw.isEmpty) return const [];
     final decoded = jsonDecode(raw) as List;
-    return decoded.cast<int>();
+    return List<int>.from(decoded);
   }
 
-  Future<void> save(List<int> ids) => _prefs.setString(_key, jsonEncode(ids));
+  Future<void> save(List<int> ids) =>
+      _localStorage.write(_key, jsonEncode(ids));
 }

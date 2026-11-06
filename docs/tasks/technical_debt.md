@@ -22,7 +22,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 
 ## Discover & favourites
 - ❌ Favourite tap on the listing not working. `toggleFavourite` mutates `favouriteIds` `const []` throws, and Equatable skips the emit
-- ❌ Corrupt favourites in prefs → crash on startup 
+- ✅ Corrupt favourites in prefs → crash on startup → `DiscoverCubit.restoreFavourites` loads them as `[]`
 - ❌ `DiscoverCubit` holds 2 features, discover + favourites → `FavouritesCubit`
 - ❌ `unawaited(save)` drops the error in discover_cubit
 - ❌ `ShowCard` uses `context.watch`, every card rebuilds on any Discover change
@@ -59,7 +59,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 
 ## Architecture
 - ❌ `SearchRepository`, `RssFeedService` and `ShowDetailRepository` are app-scoped, though only route-scoped blocs use them
-- ❌ `SharedPreferences` without a wrapper, changing package means touching every direct use → `LocalStorage` in `common/storage/` (like `ApiClient`), concrete `<Feature>Repository` per feature
+- 🟡 `SharedPreferences` without a wrapper, changing package means touching every direct use → `LocalStorage` in `common/storage/` (like `ApiClient`), concrete `<Feature>Repository` per feature. `LocalStorage` and `FavouritesRepository` done, `LibraryStore` still on raw prefs
 - ❌ Shared code inside features: `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`. `ItunesSearchService` imports discover → `common/`
 - ❌ `home/` flat folder → `views/`
 - ❌ `RouterBuilder` lives in `common/router/` and imports every feature page → `lib/router/`

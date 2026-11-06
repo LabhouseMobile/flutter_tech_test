@@ -21,7 +21,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     super.initState();
-    unawaited(context.read<DiscoverCubit>().loadFeatured());
+    final cubit = context.read<DiscoverCubit>();
+    unawaited(cubit.loadFeatured());
+    unawaited(cubit.restoreFavourites());
   }
 
   @override
@@ -36,7 +38,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
           ),
         ],
       ),
-      body: BlocBuilder<DiscoverCubit, DiscoverState>(
+      body: BlocConsumer<DiscoverCubit, DiscoverState>(
+        listenWhen: (previous, current) =>
+            current.status == DiscoverStatus.ready &&
+            current.errorMessage != null &&
+            current.errorMessage != previous.errorMessage,
+        // TODO(marco): If this will be the standard usage, we could extend cxt
+        listener: (context, state) => ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(state.errorMessage!))),
         builder: (context, state) {
           switch (state.status) {
             case DiscoverStatus.initial:

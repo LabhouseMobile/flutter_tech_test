@@ -20,6 +20,10 @@ void main() {
         CabinaException.messageOf(const CabinaPlayerException('audio error')),
         'audio error',
       );
+      expect(
+        CabinaException.messageOf(const StorageException('disk full')),
+        'disk full',
+      );
     });
 
     test(

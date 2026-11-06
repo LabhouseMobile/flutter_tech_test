@@ -27,7 +27,7 @@
 - artworkUrl checks null but never empty or non valid URL's
 - Shouldn't we use the bloc concurrency?
 - UI elemnts when a podcast doesnt have episodes
-
+- Missing Favs Tab or UI, would say add it inside Library due you have your subscriptions there
 
 # Architectural questions
 

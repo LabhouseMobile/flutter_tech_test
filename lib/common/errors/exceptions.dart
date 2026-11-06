@@ -36,3 +36,9 @@ class FeedParseException extends CabinaException {
 class CabinaPlayerException extends CabinaException {
   const CabinaPlayerException(super.message, {super.cause});
 }
+
+/// Local storage failed to read or write. `LocalStorage` throws it whatever
+/// the backend.
+class StorageException extends CabinaException {
+  const StorageException(super.message, {super.cause});
+}
