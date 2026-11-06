@@ -27,7 +27,7 @@ lib/
   search/          Debounced iTunes search (SearchBloc)
   show_detail/     Show detail from the RSS feed (ShowDetailBloc, RssFeedService, RssFeedParser)
   player/          Audio playback (AudioPlayerBloc over just_audio)
-  library/         Subscribed shows. Known debt, see below
+  library/         Subscribed shows (LibraryCubit, app-scoped: the tab and SubscribeButton share it)
   home/            Bottom-nav shell
   router/          RouterBuilder: only lists each page's route(). Still in common/router/ (Known debt)
 test/              Mirrors lib/ (see Known debt)
@@ -107,7 +107,6 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 
 | Where            | Pattern not to copy                                                                                                                                                  |
 |------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `library/`       | Singleton `LibraryStore`, no repository or cubit, flat folder                                                                                                        |
 | `home/`          | Flat folder                                                                                                                                                          |
 | `common/router/` | `RouterBuilder` in `common/`, so `common/` imports every feature page. Target: `lib/router/`                                                                         |
 | `discover/`      | `DiscoverCubit` also owns favourites                                                                                                                                 |
@@ -115,7 +114,6 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 | `show_detail/`   | `ShowDetailBloc` with a single event and no transformer                                                                                                              |
 | Shared code      | `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`, `SubscribeButton` live in a feature but are used by others; `ItunesSearchService` imports discover        |
 | DI               | Repositories of route-scoped blocs registered app-scoped                                                                                                             |
-| Persistence      | `LibraryStore` uses `SharedPreferences` directly instead of `LocalStorage`                                                                                           |
 | Models           | Fields left out of `props`                                                                                                                                           |
 | Pages, DI        | Unused callback params not named `_`                                                                                                                                 |
 | `test/`          | Bloc and cubit tests at the feature root, not under `bloc/` or `cubit/`                                                                                              |

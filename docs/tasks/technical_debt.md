@@ -15,10 +15,11 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 - ❌ `audio_session` declared, not configured 
 
 ## Library
-- ❌ Subscribing a new podcast and going back, library is not updated. `LibraryPage` loads once inside the `IndexedStack`
+- ✅ Subscribing a new podcast and going back, library is not updated. `LibraryPage` loads once inside the `IndexedStack` → one app-scoped `LibraryCubit` shared by the tab and `SubscribeButton`
 - ❌ Library item tap doesn't open the podcast detail 
-- ❌ Singleton `LibraryStore` on raw prefs, no repository or cubit, flat folder
+- ✅ Singleton `LibraryStore` on raw prefs, no repository or cubit, flat folder → `LibraryCubit` → `LibraryRepository` → `LocalStorage`, feature anatomy
 - ❌ `SubscribeButton` lives in library, only `show_detail` renders it
+- ✅ Subscriptions saved as `id|title|author|artwork`: a corrupt entry broke the tab, and a title or author with `|` or `;` split wrong on the next load → JSON under `library_podcasts`, the old key migrated once and then deleted, bad entries skipped
 
 ## Discover & favourites
 - ✅ Favourite tap on the listing not working. `toggleFavourite` mutates `favouriteIds` `const []` throws, and Equatable skips the emit → a new list on every toggle, emitted after the save
@@ -59,7 +60,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 
 ## Architecture
 - ❌ `SearchRepository`, `RssFeedService` and `ShowDetailRepository` are app-scoped, though only route-scoped blocs use them
-- 🟡 `SharedPreferences` without a wrapper, changing package means touching every direct use → `LocalStorage` in `common/storage/` (like `ApiClient`), concrete `<Feature>Repository` per feature. `LocalStorage` and `FavouritesRepository` done, `LibraryStore` still on raw prefs
+- ✅ `SharedPreferences` without a wrapper, changing package means touching every direct use → `LocalStorage` in `common/storage/` (like `ApiClient`), concrete `<Feature>Repository` per feature
 - ❌ Shared code inside features: `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`. `ItunesSearchService` imports discover → `common/`
 - ❌ `home/` flat folder → `views/`
 - ❌ `RouterBuilder` lives in `common/router/` and imports every feature page → `lib/router/`

@@ -1,64 +1,32 @@
-import 'dart:async';
-
-import 'package:cabina/library/library_store.dart';
-import 'package:cabina/library/subscribed_podcast.dart';
+import 'package:cabina/library/cubit/library_cubit.dart';
+import 'package:cabina/library/models/subscribed_podcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-// Toggles a Library subscription. Talks straight to LibraryStore and rebuilds
-// itself with setState — the original Library implementation.
-class SubscribeButton extends StatefulWidget {
-  const SubscribeButton({
-    required this.id,
-    required this.title,
-    required this.author,
-    this.artworkUrl,
-    super.key,
-  });
+/// Subscribes to or unsubscribes from [podcast] through the app-scoped
+/// [LibraryCubit]. Disabled until the library is ready.
+class SubscribeButton extends StatelessWidget {
+  const SubscribeButton({required this.podcast, super.key});
 
-  final int id;
-  final String title;
-  final String author;
-  final String? artworkUrl;
-
-  @override
-  State<SubscribeButton> createState() => _SubscribeButtonState();
-}
-
-class _SubscribeButtonState extends State<SubscribeButton> {
-  @override
-  void initState() {
-    super.initState();
-    unawaited(
-      LibraryStore.instance.load().then((_) {
-        if (mounted) setState(() {});
-      }),
-    );
-  }
-
-  Future<void> _toggle() async {
-    final store = LibraryStore.instance;
-    if (store.isSubscribed(widget.id)) {
-      await store.unsubscribe(widget.id);
-    } else {
-      await store.subscribe(
-        SubscribedPodcast(
-          id: widget.id,
-          title: widget.title,
-          author: widget.author,
-          artworkUrl: widget.artworkUrl,
-        ),
-      );
-    }
-    if (mounted) setState(() {});
-  }
+  final SubscribedPodcast podcast;
 
   @override
   Widget build(BuildContext context) {
-    final subscribed = LibraryStore.instance.isSubscribed(widget.id);
+    final ready = context.select<LibraryCubit, bool>(
+      (cubit) => cubit.state.status == LibraryStatus.ready,
+    );
+    final subscribed = context.select<LibraryCubit, bool>(
+      (cubit) => cubit.state.isSubscribed(podcast.id),
+    );
     return FilledButton.icon(
-      onPressed: _toggle,
+      onPressed: ready ? () => _toggle(context.read<LibraryCubit>()) : null,
       icon: Icon(subscribed ? Icons.check : Icons.add),
       label: Text(subscribed ? 'Subscribed' : 'Subscribe'),
     );
   }
+
+  Future<void> _toggle(LibraryCubit cubit) =>
+      cubit.state.isSubscribed(podcast.id)
+      ? cubit.unsubscribe(podcast.id)
+      : cubit.subscribe(podcast);
 }
