@@ -80,6 +80,59 @@ flutter test
 
 A few example tests live under `test/` — use them as a pattern for any you add.
 
+## AI environment
+
+Agents in development went from autocomplete, to harnesses and apps, to repositories that are ready
+for an agent like Claude, Gemini or GPT to work in. `AGENTS.md` and the skill files are what make
+that possible here: whatever model a dev uses, everyone shares the same environment and the same
+rules.
+
+### What's in it
+
+| Path                                    | What it is                                                                                                                                  |
+|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `AGENTS.md`                             | The rules for agents and humans: stack, project map, layers, state, errors, tests, known debt, and when to stop and ask. No `CLAUDE.md`.     |
+| `.agent/skills/feature-refactor/`       | Refactors one feature so it follows `AGENTS.md`. Writes a plan in `docs/impl_plans/` and stops for approval before touching code.           |
+| `.agent/skills/staged-audit/`           | Read-only audit of what's staged. Classifies findings P0–P3 and scores the change from 1 to 300.                                            |
+| `docs/impl_plans/`                      | One plan per change (`NN_<slug>.md`). Problem, decisions, tests first, out of scope. Approved before any code.                               |
+| `docs/tasks/technical_debt.md`          | Known issues and their status (✅ 🟡 ❌). The source of truth.                                                                                |
+| `docs/tasks/human_notes_repo_review.md` | My handwritten notes from reviewing the app: bugs, improvements, architectural questions.                                                   |
+| [`docs/marcos_brain.md`](docs/marcos_brain.md) | Why the repository looks the way it does, and how I think about working with AI.                                                     |
+
+### Setup
+
+Claude Code reads skills from `.claude/skills`, and `.claude/` is git-ignored. Link it once:
+
+```bash
+mkdir -p .claude && ln -s ../.agent/skills .claude/skills
+```
+
+Other agents read `AGENTS.md` from the root.
+
+### Workflow
+
+1. A plan in `docs/impl_plans/`, and it waits for approval.
+2. Tests first, then the change.
+3. Gates green: `fvm flutter analyze`, `fvm dart format`, `fvm flutter test`.
+4. I stage the files by hand. The agent never runs `git add`, commits or pushes.
+5. `staged-audit` on what's staged, then the commit.
+
+### usage-ledger
+
+`usage-ledger` is a plugin I built for this workflow. It measures AI usage in time and money
+(tokens) every time the AI works on a feature, from the implementation to the questions we ask it
+along the way. It's not there to take credit away from the developer's work. It's there to know
+what a feature or a refactor really costs.
+
+In Claude Code:
+
+1. `/plugin marketplace add muric-dev/dev-workflow-plugins`
+2. `/plugin install usage-ledger@dev-workflow-plugins`
+3. From there it runs as `/usage-ledger:usage-ledger`
+
+`feature-refactor` knows `usage-ledger` exists and logs each phase with it. If it isn't installed,
+that step is skipped.
+
 ## Configuration — AI Companion
 
 The AI Episode Companion (added as part of the test) needs an LLM provider key.
