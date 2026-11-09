@@ -162,5 +162,26 @@ void main() {
         expect(find.text('0:30'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'GIVEN a playing episode '
+      'WHEN an action error arrives '
+      'THEN shows a SnackBar and keeps the controls',
+      (tester) async {
+        const playing = PlayerState(status: PlayerStatus.playing);
+        whenListen(
+          bloc,
+          Stream.value(playing.copyWith(errorMessage: 'Could not seek')),
+          initialState: playing,
+        );
+
+        await pumpPage(tester);
+        await tester.pump();
+
+        expect(find.widgetWithText(SnackBar, 'Could not seek'), findsOneWidget);
+        expect(find.byType(PlayerControls), findsOneWidget);
+        expect(find.byType(ErrorView), findsNothing);
+      },
+    );
   });
 }

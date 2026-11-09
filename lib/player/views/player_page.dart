@@ -46,29 +46,38 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Now Playing')),
-      body: BlocSelector<PlayerBloc, PlayerState, bool>(
-        selector: (state) => state.status == PlayerStatus.error,
-        builder: (context, failed) {
-          if (failed) {
-            return ErrorView(
-              message: context.read<PlayerBloc>().state.errorMessage!,
+      body: BlocListener<PlayerBloc, PlayerState>(
+        listenWhen: (previous, current) =>
+            current.status != PlayerStatus.error &&
+            current.errorMessage != null &&
+            current.errorMessage != previous.errorMessage,
+        listener: (context, state) => ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(state.errorMessage!))),
+        child: BlocSelector<PlayerBloc, PlayerState, bool>(
+          selector: (state) => state.status == PlayerStatus.error,
+          builder: (context, failed) {
+            if (failed) {
+              return ErrorView(
+                message: context.read<PlayerBloc>().state.errorMessage!,
+              );
+            }
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  _EpisodeHeader(args: widget.args),
+                  const Spacer(),
+                  const SeekBar(),
+                  const SizedBox(height: 12),
+                  const PlayerControls(),
+                  const Spacer(),
+                ],
+              ),
             );
-          }
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            child: Column(
-              children: [
-                const Spacer(),
-                _EpisodeHeader(args: widget.args),
-                const Spacer(),
-                const SeekBar(),
-                const SizedBox(height: 12),
-                const PlayerControls(),
-                const Spacer(),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

@@ -55,3 +55,14 @@ class PlayerStatusUpdated extends PlayerEvent {
   @override
   List<Object?> get props => [status];
 }
+
+/// An engine stream or `play()` failed outside a handler.
+class _PlayerFailed extends PlayerEvent {
+  const _PlayerFailed(this.error, this.stackTrace);
+
+  final Object error;
+  final StackTrace stackTrace;
+
+  @override
+  List<Object?> get props => [error, stackTrace];
+}

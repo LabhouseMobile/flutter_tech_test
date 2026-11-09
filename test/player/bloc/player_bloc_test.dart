@@ -225,6 +225,128 @@ void main() {
     );
   });
 
+  // No `errors:` in the action tests below: blocTest swallows an error the
+  // handler didn't catch when it matches `errors:`, and then skips `expect`.
+  // Without it, an uncaught error fails the test.
+  group('PlayerBloc action errors', () {
+    const failure = CabinaPlayerException('Could not seek');
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN the repository fails to seek '
+      'WHEN PlayerSeeked '
+      'THEN emits the message and keeps the status',
+      build: () {
+        when(() => repository.seekTo(any())).thenThrow(failure);
+        return buildBloc();
+      },
+      seed: () => const PlayerState(status: PlayerStatus.playing),
+      act: (bloc) => bloc.add(const PlayerSeeked(Duration(minutes: 1))),
+      expect: () => const [
+        PlayerState(
+          status: PlayerStatus.playing,
+          errorMessage: 'Could not seek',
+        ),
+      ],
+    );
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN the repository fails to pause '
+      'WHEN PlayerPlayPauseToggled while playing '
+      'THEN emits the message and keeps the status',
+      build: () {
+        when(
+          () => repository.pause(),
+        ).thenThrow(const CabinaPlayerException('Could not pause'));
+        return buildBloc();
+      },
+      seed: () => const PlayerState(status: PlayerStatus.playing),
+      act: (bloc) => bloc.add(const PlayerPlayPauseToggled()),
+      expect: () => const [
+        PlayerState(
+          status: PlayerStatus.playing,
+          errorMessage: 'Could not pause',
+        ),
+      ],
+    );
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN the repository fails to change speed '
+      'WHEN PlayerSpeedChanged '
+      'THEN emits the message and keeps the speed',
+      build: () {
+        when(
+          () => repository.setSpeed(any()),
+        ).thenThrow(const CabinaPlayerException('Could not change speed'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const PlayerSpeedChanged(PlaybackSpeed.x2)),
+      expect: () => const [
+        PlayerState(errorMessage: 'Could not change speed'),
+      ],
+    );
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN the repository fails to play '
+      'WHEN PlayerPlayPauseToggled while paused '
+      'THEN emits the message and keeps the status',
+      build: () {
+        when(
+          () => repository.play(),
+        ).thenAnswer((_) async => throw const CabinaPlayerException('No'));
+        return buildBloc();
+      },
+      seed: () => const PlayerState(status: PlayerStatus.paused),
+      act: (bloc) => bloc.add(const PlayerPlayPauseToggled()),
+      expect: () => const [
+        PlayerState(status: PlayerStatus.paused, errorMessage: 'No'),
+      ],
+    );
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN an opened episode '
+      'WHEN playback fails '
+      'THEN emits the message without the error status',
+      build: () {
+        when(
+          () => repository.open(any()),
+        ).thenAnswer((_) async => const Duration(minutes: 5));
+        when(
+          () => repository.play(),
+        ).thenAnswer((_) async => throw const CabinaPlayerException('No'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const PlayerOpened(args)),
+      expect: () => const [
+        PlayerState(status: PlayerStatus.loading),
+        PlayerState(
+          status: PlayerStatus.loading,
+          position: PlayerPosition(total: Duration(minutes: 5)),
+        ),
+        PlayerState(
+          status: PlayerStatus.loading,
+          position: PlayerPosition(total: Duration(minutes: 5)),
+          errorMessage: 'No',
+        ),
+      ],
+    );
+
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN a previous action error '
+      'WHEN the next action runs '
+      'THEN clears the message',
+      build: () {
+        when(() => repository.seekTo(any())).thenAnswer((_) async {});
+        return buildBloc();
+      },
+      seed: () => const PlayerState(
+        status: PlayerStatus.playing,
+        errorMessage: 'Could not seek',
+      ),
+      act: (bloc) => bloc.add(const PlayerSeeked(Duration(minutes: 1))),
+      expect: () => const [PlayerState(status: PlayerStatus.playing)],
+    );
+  });
+
   group('PlayerBloc streams', () {
     blocTest<PlayerBloc, PlayerState>(
       'GIVEN a known total '
@@ -260,22 +382,24 @@ void main() {
       expect: () => const [PlayerState(status: PlayerStatus.playing)],
     );
 
+    const playbackFailed = CabinaPlayerException('Playback failed');
+
     blocTest<PlayerBloc, PlayerState>(
       'GIVEN the status stream emits an error '
-      'THEN it reaches errors',
+      'THEN it reaches errors and emits its message',
       build: buildBloc,
-      act: (_) => statusController.addError(StateError('status stream error')),
-      errors: () => [isA<StateError>()],
+      act: (_) => statusController.addError(playbackFailed),
+      errors: () => [playbackFailed],
+      expect: () => const [PlayerState(errorMessage: 'Playback failed')],
     );
 
     blocTest<PlayerBloc, PlayerState>(
       'GIVEN the position stream emits an error '
-      'THEN it reaches errors',
+      'THEN it reaches errors and emits its message',
       build: buildBloc,
-      act: (_) => positionController.addError(
-        StateError('position stream error'),
-      ),
-      errors: () => [isA<StateError>()],
+      act: (_) => positionController.addError(playbackFailed),
+      errors: () => [playbackFailed],
+      expect: () => const [PlayerState(errorMessage: 'Playback failed')],
     );
   });
 }
