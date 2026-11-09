@@ -1,5 +1,5 @@
 import 'package:cabina/common/theme/app_theme.dart';
-import 'package:cabina/player/bloc/audio_player_bloc.dart';
+import 'package:cabina/player/bloc/player_bloc.dart';
 import 'package:cabina/player/models/playback_speed.dart';
 import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
@@ -21,13 +21,13 @@ class PlayerControls extends StatelessWidget {
   void _skip(BuildContext context, Duration delta) {
     final target = position.position + delta;
     final clamped = target < Duration.zero ? Duration.zero : target;
-    context.read<AudioPlayerBloc>().add(PlayerSeeked(clamped));
+    context.read<PlayerBloc>().add(PlayerSeeked(clamped));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
-    final bloc = context.read<AudioPlayerBloc>();
+    final bloc = context.read<PlayerBloc>();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -66,7 +66,7 @@ class _PlayPauseButton extends StatelessWidget {
     final theme = context.appTheme;
     return GestureDetector(
       onTap: () =>
-          context.read<AudioPlayerBloc>().add(const PlayerPlayPauseToggled()),
+          context.read<PlayerBloc>().add(const PlayerPlayPauseToggled()),
       child: CircleAvatar(
         radius: 34,
         backgroundColor: theme.primary,

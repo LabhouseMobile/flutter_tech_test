@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cabina/common/errors/exceptions.dart';
-import 'package:cabina/player/data/audio_player_repository.dart';
+import 'package:cabina/player/data/player_repository.dart';
 import 'package:cabina/player/models/playback_speed.dart';
 import 'package:cabina/player/models/player_args.dart';
 import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
 import 'package:equatable/equatable.dart';
 
-part 'audio_player_event.dart';
-part 'audio_player_state.dart';
+part 'player_event.dart';
+part 'player_state.dart';
 
-class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
-  AudioPlayerBloc({required AudioPlayerRepository repository})
+class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
+  PlayerBloc({required PlayerRepository repository})
     : _repository = repository,
-      super(const AudioPlayerState()) {
+      super(const PlayerState()) {
     on<PlayerOpened>(_onOpened);
     on<PlayerPlayPauseToggled>(_onPlayPauseToggled);
     on<PlayerSeeked>(_onSeeked);
@@ -33,14 +33,14 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     );
   }
 
-  final AudioPlayerRepository _repository;
+  final PlayerRepository _repository;
 
   late final StreamSubscription<PlayerPosition> _positionSub;
   late final StreamSubscription<PlayerStatus> _statusSub;
 
   Future<void> _onOpened(
     PlayerOpened event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) async {
     emit(
       state.copyWith(
@@ -70,7 +70,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
   Future<void> _onPlayPauseToggled(
     PlayerPlayPauseToggled event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) async {
     if (state.status.isPlaying) {
       await _repository.pause();
@@ -81,14 +81,14 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
   Future<void> _onSeeked(
     PlayerSeeked event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) async {
     await _repository.seekTo(event.position);
   }
 
   Future<void> _onSpeedChanged(
     PlayerSpeedChanged event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) async {
     await _repository.setSpeed(event.speed.value);
     emit(state.copyWith(speed: event.speed));
@@ -96,7 +96,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
   void _onPositionUpdated(
     PlayerPositionUpdated event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) {
     final total = event.position.total ?? state.position.total;
     emit(
@@ -112,7 +112,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
   void _onStatusUpdated(
     PlayerStatusUpdated event,
-    Emitter<AudioPlayerState> emit,
+    Emitter<PlayerState> emit,
   ) {
     emit(state.copyWith(status: event.status));
   }

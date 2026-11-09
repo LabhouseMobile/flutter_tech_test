@@ -1,7 +1,7 @@
-part of 'audio_player_bloc.dart';
+part of 'player_bloc.dart';
 
-class AudioPlayerState extends Equatable {
-  const AudioPlayerState({
+class PlayerState extends Equatable {
+  const PlayerState({
     this.status = PlayerStatus.idle,
     this.position = const PlayerPosition(),
     this.speed = PlaybackSpeed.x1,
@@ -15,7 +15,7 @@ class AudioPlayerState extends Equatable {
   final PlayerArgs? args;
   final String? errorMessage;
 
-  AudioPlayerState copyWith({
+  PlayerState copyWith({
     PlayerStatus? status,
     PlayerPosition? position,
     PlaybackSpeed? speed,
@@ -23,7 +23,7 @@ class AudioPlayerState extends Equatable {
     String? errorMessage,
     bool clearError = false,
   }) {
-    return AudioPlayerState(
+    return PlayerState(
       status: status ?? this.status,
       position: position ?? this.position,
       speed: speed ?? this.speed,

@@ -1,6 +1,6 @@
 import 'package:cabina/common/extensions/duration_format.dart';
 import 'package:cabina/common/theme/app_theme.dart';
-import 'package:cabina/player/bloc/audio_player_bloc.dart';
+import 'package:cabina/player/bloc/player_bloc.dart';
 import 'package:cabina/player/models/player_position.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +27,7 @@ class SeekBar extends StatelessWidget {
           max: maxMs == 0 ? 1 : maxMs,
           activeColor: theme.primary,
           onChanged: (value) {
-            context.read<AudioPlayerBloc>().add(
+            context.read<PlayerBloc>().add(
               PlayerSeeked(Duration(milliseconds: value.round())),
             );
           },

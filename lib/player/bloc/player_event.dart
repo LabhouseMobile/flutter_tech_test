@@ -1,13 +1,13 @@
-part of 'audio_player_bloc.dart';
+part of 'player_bloc.dart';
 
-sealed class AudioPlayerEvent extends Equatable {
-  const AudioPlayerEvent();
+sealed class PlayerEvent extends Equatable {
+  const PlayerEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class PlayerOpened extends AudioPlayerEvent {
+class PlayerOpened extends PlayerEvent {
   const PlayerOpened(this.args);
 
   final PlayerArgs args;
@@ -16,11 +16,11 @@ class PlayerOpened extends AudioPlayerEvent {
   List<Object?> get props => [args];
 }
 
-class PlayerPlayPauseToggled extends AudioPlayerEvent {
+class PlayerPlayPauseToggled extends PlayerEvent {
   const PlayerPlayPauseToggled();
 }
 
-class PlayerSeeked extends AudioPlayerEvent {
+class PlayerSeeked extends PlayerEvent {
   const PlayerSeeked(this.position);
 
   final Duration position;
@@ -29,7 +29,7 @@ class PlayerSeeked extends AudioPlayerEvent {
   List<Object?> get props => [position];
 }
 
-class PlayerSpeedChanged extends AudioPlayerEvent {
+class PlayerSpeedChanged extends PlayerEvent {
   const PlayerSpeedChanged(this.speed);
 
   final PlaybackSpeed speed;
@@ -38,7 +38,7 @@ class PlayerSpeedChanged extends AudioPlayerEvent {
   List<Object?> get props => [speed];
 }
 
-class PlayerPositionUpdated extends AudioPlayerEvent {
+class PlayerPositionUpdated extends PlayerEvent {
   const PlayerPositionUpdated(this.position);
 
   final PlayerPosition position;
@@ -47,7 +47,7 @@ class PlayerPositionUpdated extends AudioPlayerEvent {
   List<Object?> get props => [position];
 }
 
-class PlayerStatusUpdated extends AudioPlayerEvent {
+class PlayerStatusUpdated extends PlayerEvent {
   const PlayerStatusUpdated(this.status);
 
   final PlayerStatus status;

@@ -1,8 +1,7 @@
 import 'package:cabina/common/theme/app_theme.dart';
 import 'package:cabina/common/widgets/poster_image.dart';
 import 'package:cabina/common/widgets/status_views.dart';
-import 'package:cabina/player/bloc/audio_player_bloc.dart';
-import 'package:cabina/player/data/audio_player_repository.dart';
+import 'package:cabina/player/bloc/player_bloc.dart';
 import 'package:cabina/player/data/services/just_audio_player_service.dart';
 import 'package:cabina/player/models/player_args.dart';
 import 'package:cabina/player/models/player_status.dart';
@@ -23,12 +22,10 @@ class PlayerPage extends StatefulWidget {
   static GoRoute route() => GoRoute(
     path: routePath,
     name: routeName,
-    builder: (context, state) {
+    builder: (_, state) {
       final args = state.extra! as PlayerArgs;
       return BlocProvider(
-        create: (_) => AudioPlayerBloc(
-          repository: AudioPlayerRepository(service: JustAudioPlayerService()),
-        ),
+        create: (_) => PlayerBloc(repository: JustAudioPlayerService()),
         child: PlayerPage(args: args),
       );
     },
@@ -42,7 +39,7 @@ class _PlayerPageState extends State<PlayerPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AudioPlayerBloc>().add(PlayerOpened(widget.args));
+    context.read<PlayerBloc>().add(PlayerOpened(widget.args));
   }
 
   @override
@@ -50,7 +47,7 @@ class _PlayerPageState extends State<PlayerPage> {
     final theme = context.appTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Now Playing')),
-      body: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
+      body: BlocBuilder<PlayerBloc, PlayerState>(
         builder: (context, state) {
           if (state.status == PlayerStatus.error) {
             return ErrorView(message: state.errorMessage!);

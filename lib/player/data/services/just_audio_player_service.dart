@@ -1,10 +1,10 @@
 import 'package:cabina/common/errors/exceptions.dart';
-import 'package:cabina/player/data/services/i_player_service.dart';
+import 'package:cabina/player/data/player_repository.dart';
 import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
 import 'package:just_audio/just_audio.dart';
 
-class JustAudioPlayerService implements IPlayerService {
+class JustAudioPlayerService implements PlayerRepository {
   JustAudioPlayerService({AudioPlayer? player})
     : _player = player ?? AudioPlayer();
 
