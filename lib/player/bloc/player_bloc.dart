@@ -45,7 +45,6 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     emit(
       state.copyWith(
         status: PlayerStatus.loading,
-        args: event.args,
         clearError: true,
       ),
     );

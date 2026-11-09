@@ -44,55 +44,66 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.appTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Now Playing')),
-      body: BlocBuilder<PlayerBloc, PlayerState>(
-        builder: (context, state) {
-          if (state.status == PlayerStatus.error) {
-            return ErrorView(message: state.errorMessage!);
+      body: BlocSelector<PlayerBloc, PlayerState, bool>(
+        selector: (state) => state.status == PlayerStatus.error,
+        builder: (context, failed) {
+          if (failed) {
+            return ErrorView(
+              message: context.read<PlayerBloc>().state.errorMessage!,
+            );
           }
-          final args = state.args ?? widget.args;
           return Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             child: Column(
               children: [
                 const Spacer(),
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: PosterImage(url: args.artworkUrl, borderRadius: 20),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  args.episode.title,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.headline.copyWith(
-                    color: theme.foreground,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  args.podcastTitle,
-                  style: AppTextStyles.caption.copyWith(
-                    color: theme.foregroundSoft,
-                  ),
-                ),
+                _EpisodeHeader(args: widget.args),
                 const Spacer(),
-                SeekBar(position: state.position),
+                const SeekBar(),
                 const SizedBox(height: 12),
-                PlayerControls(
-                  status: state.status,
-                  speed: state.speed,
-                  position: state.position,
-                ),
+                const PlayerControls(),
                 const Spacer(),
               ],
             ),
           );
         },
       ),
+    );
+  }
+}
+
+/// Artwork and titles. Built from the route's args, so position and status
+/// changes never rebuild it.
+class _EpisodeHeader extends StatelessWidget {
+  const _EpisodeHeader({required this.args});
+
+  final PlayerArgs args;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: 1,
+          child: PosterImage(url: args.artworkUrl, borderRadius: 20),
+        ),
+        const SizedBox(height: 28),
+        Text(
+          args.episode.title,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.headline.copyWith(color: theme.foreground),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          args.podcastTitle,
+          style: AppTextStyles.caption.copyWith(color: theme.foregroundSoft),
+        ),
+      ],
     );
   }
 }

@@ -18,26 +18,23 @@ void main() {
 
   setUp(() => bloc = _MockPlayerBloc());
 
-  Future<void> pumpControls(
-    WidgetTester tester,
-    PlayerState state,
-  ) {
-    when(() => bloc.state).thenReturn(state);
-    return tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme(isDark: false).toThemeData(),
-        home: Scaffold(
-          body: BlocProvider<PlayerBloc>.value(
-            value: bloc,
-            child: PlayerControls(
-              status: state.status,
-              speed: state.speed,
-              position: state.position,
-            ),
-          ),
+  /// Pumps the controls over whatever `bloc.state` is stubbed to, so a
+  /// `whenListen` stream can drive them.
+  Future<void> pumpWithBloc(WidgetTester tester) => tester.pumpWidget(
+    MaterialApp(
+      theme: AppTheme(isDark: false).toThemeData(),
+      home: Scaffold(
+        body: BlocProvider<PlayerBloc>.value(
+          value: bloc,
+          child: const PlayerControls(),
         ),
       ),
-    );
+    ),
+  );
+
+  Future<void> pumpControls(WidgetTester tester, PlayerState state) {
+    when(() => bloc.state).thenReturn(state);
+    return pumpWithBloc(tester);
   }
 
   group('PlayerControls', () {
@@ -69,6 +66,46 @@ void main() {
         verify(
           () => bloc.add(const PlayerSpeedChanged(PlaybackSpeed.x1_25)),
         ).called(1);
+      },
+    );
+
+    testWidgets(
+      'GIVEN a paused episode '
+      'WHEN the status changes to playing '
+      'THEN the button shows pause',
+      (tester) async {
+        whenListen(
+          bloc,
+          Stream.value(const PlayerState(status: PlayerStatus.playing)),
+          initialState: const PlayerState(status: PlayerStatus.paused),
+        );
+        await pumpWithBloc(tester);
+        expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+
+        await tester.pump();
+
+        expect(find.byIcon(Icons.pause), findsOneWidget);
+        expect(find.byIcon(Icons.play_arrow), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'GIVEN speed x1 '
+      'WHEN the speed changes to x1_25 '
+      'THEN the label shows the new speed',
+      (tester) async {
+        whenListen(
+          bloc,
+          Stream.value(const PlayerState(speed: PlaybackSpeed.x1_25)),
+          initialState: const PlayerState(),
+        );
+        await pumpWithBloc(tester);
+        expect(find.text(PlaybackSpeed.x1.label), findsOneWidget);
+
+        await tester.pump();
+
+        expect(find.text(PlaybackSpeed.x1_25.label), findsOneWidget);
+        expect(find.text(PlaybackSpeed.x1.label), findsNothing);
       },
     );
 

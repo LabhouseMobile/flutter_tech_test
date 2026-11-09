@@ -110,11 +110,9 @@ void main() {
       expect: () => const [
         PlayerState(
           status: PlayerStatus.loading,
-          args: args,
         ),
         PlayerState(
           status: PlayerStatus.loading,
-          args: args,
           position: PlayerPosition(total: Duration(minutes: 5)),
         ),
       ],
@@ -135,11 +133,9 @@ void main() {
       expect: () => const [
         PlayerState(
           status: PlayerStatus.loading,
-          args: args,
         ),
         PlayerState(
           status: PlayerStatus.error,
-          args: args,
           errorMessage: 'corrupt file',
         ),
       ],
@@ -160,11 +156,9 @@ void main() {
       expect: () => const [
         PlayerState(
           status: PlayerStatus.loading,
-          args: args,
         ),
         PlayerState(
           status: PlayerStatus.error,
-          args: args,
           errorMessage: CabinaException.fallbackMessage,
         ),
       ],

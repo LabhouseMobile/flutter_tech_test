@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SeekBar extends StatelessWidget {
-  const SeekBar({required this.position, super.key});
-
-  final PlayerPosition position;
+  const SeekBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
+    final position = context.select<PlayerBloc, PlayerPosition>(
+      (bloc) => bloc.state.position,
+    );
     final total = position.total ?? Duration.zero;
     final maxMs = total.inMilliseconds.toDouble();
     final valueMs = position.position.inMilliseconds.toDouble().clamp(

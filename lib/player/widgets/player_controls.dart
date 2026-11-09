@@ -1,50 +1,33 @@
 import 'package:cabina/common/theme/app_theme.dart';
 import 'package:cabina/player/bloc/player_bloc.dart';
 import 'package:cabina/player/models/playback_speed.dart';
-import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayerControls extends StatelessWidget {
-  const PlayerControls({
-    required this.status,
-    required this.speed,
-    required this.position,
-    super.key,
-  });
+  const PlayerControls({super.key});
 
-  final PlayerStatus status;
-  final PlaybackSpeed speed;
-  final PlayerPosition position;
-
+  /// Reads the position on tap, so the row doesn't rebuild on every tick.
   void _skip(BuildContext context, Duration delta) {
-    final target = position.position + delta;
+    final bloc = context.read<PlayerBloc>();
+    final target = bloc.state.position.position + delta;
     final clamped = target < Duration.zero ? Duration.zero : target;
-    context.read<PlayerBloc>().add(PlayerSeeked(clamped));
+    bloc.add(PlayerSeeked(clamped));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.appTheme;
-    final bloc = context.read<PlayerBloc>();
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        TextButton(
-          onPressed: () => bloc.add(PlayerSpeedChanged(speed.next)),
-          child: Text(
-            speed.label,
-            style: AppTextStyles.label.copyWith(color: theme.foreground),
-          ),
-        ),
+        const _SpeedButton(),
         IconButton(
           iconSize: 34,
           icon: const Icon(Icons.replay_30),
           onPressed: () => _skip(context, const Duration(seconds: -30)),
         ),
-        _PlayPauseButton(status: status),
+        const _PlayPauseButton(),
         IconButton(
           iconSize: 34,
           icon: const Icon(Icons.forward_30),
@@ -56,14 +39,35 @@ class PlayerControls extends StatelessWidget {
   }
 }
 
-class _PlayPauseButton extends StatelessWidget {
-  const _PlayPauseButton({required this.status});
-
-  final PlayerStatus status;
+class _SpeedButton extends StatelessWidget {
+  const _SpeedButton();
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
+    final speed = context.select<PlayerBloc, PlaybackSpeed>(
+      (bloc) => bloc.state.speed,
+    );
+    return TextButton(
+      onPressed: () =>
+          context.read<PlayerBloc>().add(PlayerSpeedChanged(speed.next)),
+      child: Text(
+        speed.label,
+        style: AppTextStyles.label.copyWith(color: theme.foreground),
+      ),
+    );
+  }
+}
+
+class _PlayPauseButton extends StatelessWidget {
+  const _PlayPauseButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final status = context.select<PlayerBloc, PlayerStatus>(
+      (bloc) => bloc.state.status,
+    );
     return GestureDetector(
       onTap: () =>
           context.read<PlayerBloc>().add(const PlayerPlayPauseToggled()),

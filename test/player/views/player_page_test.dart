@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cabina/common/theme/app_theme.dart';
+import 'package:cabina/common/widgets/poster_image.dart';
 import 'package:cabina/common/widgets/status_views.dart';
 import 'package:cabina/player/bloc/player_bloc.dart';
 import 'package:cabina/player/models/player_args.dart';
+import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
 import 'package:cabina/player/views/player_page.dart';
+import 'package:cabina/player/widgets/player_controls.dart';
 import 'package:cabina/show_detail/models/episode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,6 +94,72 @@ void main() {
 
         expect(find.byType(ErrorView), findsOneWidget);
         expect(find.text('Could not load audio'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'GIVEN a loading episode '
+      'WHEN opening fails '
+      'THEN replaces the player with the ErrorView',
+      (tester) async {
+        whenListen(
+          bloc,
+          Stream.value(
+            const PlayerState(
+              status: PlayerStatus.error,
+              errorMessage: 'Could not load audio',
+            ),
+          ),
+          initialState: const PlayerState(status: PlayerStatus.loading),
+        );
+        await pumpPage(tester);
+        expect(find.byType(ErrorView), findsNothing);
+
+        await tester.pump();
+
+        expect(find.byType(ErrorView), findsOneWidget);
+        expect(find.text('Could not load audio'), findsOneWidget);
+        expect(find.byType(PlayerControls), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'GIVEN a playing episode '
+      'WHEN only the position changes '
+      'THEN rebuilds the seek bar and not the header or the controls',
+      (tester) async {
+        const playing = PlayerState(
+          status: PlayerStatus.playing,
+          position: PlayerPosition(total: Duration(minutes: 5)),
+        );
+        final states = StreamController<PlayerState>();
+        addTearDown(states.close);
+        whenListen(bloc, states.stream, initialState: playing);
+        await pumpPage(tester);
+
+        final controlsRow = find.descendant(
+          of: find.byType(PlayerControls),
+          matching: find.byType(Row),
+        );
+        final posterBefore = tester.widget(find.byType(PosterImage));
+        final rowBefore = tester.widget(controlsRow.first);
+        final sliderBefore = tester.widget(find.byType(Slider));
+
+        states.add(
+          const PlayerState(
+            status: PlayerStatus.playing,
+            position: PlayerPosition(
+              position: Duration(seconds: 30),
+              total: Duration(minutes: 5),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(tester.widget(find.byType(PosterImage)), same(posterBefore));
+        expect(tester.widget(controlsRow.first), same(rowBefore));
+        expect(tester.widget(find.byType(Slider)), isNot(same(sliderBefore)));
+        expect(find.text('0:30'), findsOneWidget);
       },
     );
   });
