@@ -9,11 +9,15 @@ class PlayerControls extends StatelessWidget {
   const PlayerControls({super.key});
 
   /// Reads the position on tap, so the row doesn't rebuild on every tick.
+  /// The target stays within the episode: zero, and its length when known.
   void _skip(BuildContext context, Duration delta) {
     final bloc = context.read<PlayerBloc>();
-    final target = bloc.state.position.position + delta;
-    final clamped = target < Duration.zero ? Duration.zero : target;
-    bloc.add(PlayerSeeked(clamped));
+    final position = bloc.state.position;
+    var target = position.position + delta;
+    if (target < Duration.zero) target = Duration.zero;
+    final total = position.total;
+    if (total != null && target > total) target = total;
+    bloc.add(PlayerSeeked(target));
   }
 
   @override

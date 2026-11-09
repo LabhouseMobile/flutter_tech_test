@@ -130,5 +130,29 @@ void main() {
         verify(() => bloc.add(const PlayerSeeked(Duration.zero))).called(1);
       },
     );
+
+    testWidgets(
+      'GIVEN position 4:50 of 5:00 '
+      'WHEN tapping forward 30 '
+      'THEN adds PlayerSeeked clamped at the episode length',
+      (tester) async {
+        await pumpControls(
+          tester,
+          const PlayerState(
+            status: PlayerStatus.playing,
+            position: PlayerPosition(
+              position: Duration(minutes: 4, seconds: 50),
+              total: Duration(minutes: 5),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byIcon(Icons.forward_30));
+
+        verify(
+          () => bloc.add(const PlayerSeeked(Duration(minutes: 5))),
+        ).called(1);
+      },
+    );
   });
 }
