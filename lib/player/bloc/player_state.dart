@@ -1,5 +1,8 @@
 part of 'player_bloc.dart';
 
+/// What the player screen shows. [errorMessage] is always set with
+/// [PlayerStatus.error] (open failed); otherwise it is a failed action, shown
+/// in a SnackBar.
 class PlayerState extends Equatable {
   const PlayerState({
     this.status = PlayerStatus.idle,

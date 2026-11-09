@@ -5,6 +5,8 @@ import 'package:cabina/player/models/player_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Speed, ±30 s skips and play/pause. Each button watches only its own slice
+/// of [PlayerState].
 class PlayerControls extends StatelessWidget {
   const PlayerControls({super.key});
 
@@ -79,12 +81,12 @@ class _PlayPauseButton extends StatelessWidget {
         radius: 34,
         backgroundColor: theme.primary,
         child: status.isBusy
-            ? const SizedBox(
+            ? SizedBox(
                 width: 26,
                 height: 26,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  valueColor: AlwaysStoppedAnimation(theme.onPrimary),
                 ),
               )
             : Icon(

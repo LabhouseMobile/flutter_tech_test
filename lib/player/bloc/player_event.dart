@@ -1,5 +1,6 @@
 part of 'player_bloc.dart';
 
+/// Everything [PlayerBloc] reacts to: user actions and engine updates.
 sealed class PlayerEvent extends Equatable {
   const PlayerEvent();
 
@@ -7,6 +8,7 @@ sealed class PlayerEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Load [args]'s episode and start playing it.
 class PlayerOpened extends PlayerEvent {
   const PlayerOpened(this.args);
 
@@ -16,10 +18,12 @@ class PlayerOpened extends PlayerEvent {
   List<Object?> get props => [args];
 }
 
+/// Pause when playing, play otherwise.
 class PlayerPlayPauseToggled extends PlayerEvent {
   const PlayerPlayPauseToggled();
 }
 
+/// Jump to [position].
 class PlayerSeeked extends PlayerEvent {
   const PlayerSeeked(this.position);
 
@@ -29,6 +33,7 @@ class PlayerSeeked extends PlayerEvent {
   List<Object?> get props => [position];
 }
 
+/// Play at [speed].
 class PlayerSpeedChanged extends PlayerEvent {
   const PlayerSpeedChanged(this.speed);
 
@@ -38,6 +43,7 @@ class PlayerSpeedChanged extends PlayerEvent {
   List<Object?> get props => [speed];
 }
 
+/// The engine reported a new position.
 class PlayerPositionUpdated extends PlayerEvent {
   const PlayerPositionUpdated(this.position);
 
@@ -47,6 +53,7 @@ class PlayerPositionUpdated extends PlayerEvent {
   List<Object?> get props => [position];
 }
 
+/// The engine reported a new status.
 class PlayerStatusUpdated extends PlayerEvent {
   const PlayerStatusUpdated(this.status);
 

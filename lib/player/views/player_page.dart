@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// Full-screen player for one episode. Opens it on start and stops it when
+/// the route is popped, since the bloc is route-scoped.
 class PlayerPage extends StatefulWidget {
   const PlayerPage({required this.args, super.key});
 

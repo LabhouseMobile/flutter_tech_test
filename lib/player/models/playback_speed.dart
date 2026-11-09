@@ -1,3 +1,4 @@
+/// The speeds the speed button cycles through, with their label.
 enum PlaybackSpeed {
   x0_75(0.75, '0.75×'),
   x1(1, '1×'),

@@ -12,6 +12,8 @@ import 'package:equatable/equatable.dart';
 part 'player_event.dart';
 part 'player_state.dart';
 
+/// Plays one episode: UI events plus the engine's position and status
+/// streams, which is why it is a Bloc. Owns and disposes its repository.
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   PlayerBloc({required PlayerRepository repository})
     : _repository = repository,
@@ -125,10 +127,14 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     );
   }
 
+  /// Ignored after a failed open: the engine can still report `idle`, which
+  /// would swap the error view for controls with nothing loaded. The next
+  /// [PlayerOpened] leaves the error status.
   void _onStatusUpdated(
     PlayerStatusUpdated event,
     Emitter<PlayerState> emit,
   ) {
+    if (state.status == PlayerStatus.error) return;
     emit(state.copyWith(status: event.status));
   }
 

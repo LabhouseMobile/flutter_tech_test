@@ -6,6 +6,8 @@ import 'package:cabina/player/models/player_position.dart';
 import 'package:cabina/player/models/player_status.dart';
 import 'package:just_audio/just_audio.dart';
 
+/// [PlayerRepository] over just_audio. Engine failures surface as
+/// [CabinaPlayerException].
 class JustAudioPlayerService implements PlayerRepository {
   JustAudioPlayerService({AudioPlayer? player})
     : _player = player ?? AudioPlayer();

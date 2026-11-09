@@ -382,6 +382,19 @@ void main() {
       expect: () => const [PlayerState(status: PlayerStatus.playing)],
     );
 
+    blocTest<PlayerBloc, PlayerState>(
+      'GIVEN an episode that failed to open '
+      'WHEN the status stream emits idle '
+      'THEN keeps the error status and its message',
+      build: buildBloc,
+      seed: () => const PlayerState(
+        status: PlayerStatus.error,
+        errorMessage: 'Could not load audio',
+      ),
+      act: (_) => statusController.add(PlayerStatus.idle),
+      expect: () => const <PlayerState>[],
+    );
+
     const playbackFailed = CabinaPlayerException('Playback failed');
 
     blocTest<PlayerBloc, PlayerState>(
