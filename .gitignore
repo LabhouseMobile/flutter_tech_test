@@ -52,3 +52,6 @@ app.*.map.json
 
 # Claude Code local state.
 .claude/
+
+# Local dart-define values (API keys). Commit .env.example, never .env.
+.env
