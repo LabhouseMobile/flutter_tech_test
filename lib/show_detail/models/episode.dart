@@ -10,6 +10,7 @@ class Episode extends Equatable {
     this.duration,
     this.publishedAt,
     this.imageUrl,
+    this.transcriptUrl,
   });
 
   final String guid;
@@ -23,6 +24,19 @@ class Episode extends Equatable {
   final DateTime? publishedAt;
   final String? imageUrl;
 
+  /// The feed's SRT or VTT transcript (`<podcast:transcript>`), when it
+  /// publishes one.
+  final String? transcriptUrl;
+
   @override
-  List<Object?> get props => [guid, title, audioUrl, duration, publishedAt];
+  List<Object?> get props => [
+    guid,
+    title,
+    audioUrl,
+    descriptionHtml,
+    duration,
+    publishedAt,
+    imageUrl,
+    transcriptUrl,
+  ];
 }

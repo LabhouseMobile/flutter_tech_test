@@ -51,7 +51,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 - ✅ iTunes duration badly parsed (`hh:mm`, `mm`) → `ItunesDurationParser`
 - ❌ Named time zones other than UTC (`EST`, `PDT`) rejected → episode without date, sorted last
 - ❌ `artworkUrl` checks null, never empty or invalid URLs
-- 🟡 `Podcast`, `Episode` and `PodcastDetail` leave fields out of `props` → `PodcastDetail` fixed; `Podcast` and `Episode` still open
+- 🟡 `Podcast`, `Episode` and `PodcastDetail` leave fields out of `props` → `PodcastDetail` and `Episode` fixed; `Podcast` still open
 - ❌ `.g.dart` kept. Removing it means hand-writing `Podcast.fromJson`, its own refactor
 
 ## Errors

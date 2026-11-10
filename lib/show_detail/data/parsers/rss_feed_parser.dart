@@ -52,7 +52,19 @@ class RssFeedParser {
     );
   }
 
+  /// `<podcast:transcript>` types AI Companion can read: SRT and VTT.
+  static const _transcriptTypes = {
+    'application/srt',
+    'application/x-subrip',
+    'text/srt',
+    'text/vtt',
+  };
+
   /// Returns `null` when [item] has no title or no enclosure URL to play.
+  ///
+  /// `transcriptUrl` is the first `<podcast:transcript>` with a URL whose
+  /// `type` is SRT or VTT. Other formats (JSON, HTML, plain text) are skipped,
+  /// so an episode that only lists those has no transcript.
   Episode? _parseEpisode(XmlElement item) {
     final title = _firstText(item, 'title') ?? _firstText(item, 'itunes:title');
     final audioUrl = _firstAttr(item, 'enclosure', 'url');
@@ -70,7 +82,19 @@ class RssFeedParser {
       ),
       publishedAt: Rfc822DateParser.tryParse(_firstText(item, 'pubDate')),
       imageUrl: _firstAttr(item, 'itunes:image', 'href'),
+      transcriptUrl: _transcriptUrl(item),
     );
+  }
+
+  String? _transcriptUrl(XmlElement item) {
+    for (final transcript in item.findElements('podcast:transcript')) {
+      final url = transcript.getAttribute('url')?.trim();
+      final type = transcript.getAttribute('type');
+      if (url != null && url.isNotEmpty && _transcriptTypes.contains(type)) {
+        return url;
+      }
+    }
+    return null;
   }
 
   String? _firstText(XmlElement parent, String name) {

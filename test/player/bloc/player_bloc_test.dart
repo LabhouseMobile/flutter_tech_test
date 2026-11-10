@@ -88,6 +88,7 @@ void main() {
   const args = PlayerArgs(
     episode: episode,
     podcastTitle: 'Podcast Title',
+    feedUrl: 'https://example.com/feed.xml',
   );
 
   group('PlayerBloc PlayerOpened', () {
