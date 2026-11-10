@@ -89,15 +89,15 @@ rules.
 
 ### What's in it
 
-| Path                                    | What it is                                                                                                                                  |
-|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| `AGENTS.md`                             | The rules for agents and humans: stack, project map, layers, state, errors, tests, known debt, and when to stop and ask. No `CLAUDE.md`.     |
-| `.agent/skills/feature-refactor/`       | Refactors one feature so it follows `AGENTS.md`. Writes a plan in `docs/impl_plans/` and stops for approval before touching code.           |
-| `.agent/skills/staged-audit/`           | Read-only audit of what's staged. Classifies findings P0–P3 and scores the change from 1 to 300.                                            |
-| `docs/impl_plans/`                      | One plan per change (`NN_<slug>.md`). Problem, decisions, tests first, out of scope. Approved before any code.                               |
-| `docs/tasks/technical_debt.md`          | Known issues and their status (✅ 🟡 ❌). The source of truth.                                                                                |
-| `docs/tasks/human_notes_repo_review.md` | My handwritten notes from reviewing the app: bugs, improvements, architectural questions.                                                   |
-| [`docs/marcos_brain.md`](docs/marcos_brain.md) | Why the repository looks the way it does, and how I think about working with AI.                                                     |
+| Path                                           | What it is                                                                                                                                      |
+|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AGENTS.md`                                    | The rules for agents and humans: stack, project map, layers, state, errors, tests, known debt, and when to stop and ask. No `CLAUDE.md`.        |
+| `.agent/skills/feature-refactor/`              | Refactors one feature so it follows `AGENTS.md`. Writes a plan in the feature's `plan/` and stops for approval before touching code.            |
+| `.agent/skills/staged-audit/`                  | Read-only audit of what's staged. Classifies findings P0–P3 and scores the change from 1 to 300.                                                |
+| `docs/<feature>/plan/`                         | One plan per change (`NN_implementation_plan.md`). Problem, decisions, tests first, out of scope. Approved before any code.                     |
+| `docs/tasks/technical_debt.md`                 | Known issues and their status (✅ 🟡 ❌). The source of truth.                                                                                  |
+| `docs/tasks/human_notes_repo_review.md`        | My handwritten notes from reviewing the app: bugs, improvements, architectural questions.                                                       |
+| [`docs/marcos_brain.md`](docs/marcos_brain.md) | Why the repository looks the way it does, and how I think about working with AI.                                                                |
 
 ### Setup
 
@@ -111,7 +111,7 @@ Other agents read `AGENTS.md` from the root.
 
 ### Workflow
 
-1. A plan in `docs/impl_plans/`, and it waits for approval.
+1. A plan in `docs/<feature>/plan/`, and it waits for approval.
 2. Tests first, then the change.
 3. Gates green: `fvm flutter analyze`, `fvm dart format`, `fvm flutter test`.
 4. I stage the files by hand. The agent never runs `git add`, commits or pushes.
@@ -135,15 +135,12 @@ that step is skipped.
 
 ## Configuration — AI Companion
 
-The AI Episode Companion (added as part of the test) needs an LLM provider key.
-**Do not commit it.** Define it as a documented constant the reviewer can fill in
-locally, e.g.:
+The AI Companion (added as part of the test) needs an OpenAI API key. **Do not commit it.** It lives
+in a `.env` file at the root, which is git-ignored:
 
-```dart
-// lib/common/env/env.dart
-// TODO(reviewer): provide an OpenAI/Anthropic API key to run the AI feature.
-const String kLlmApiKey = String.fromEnvironment('LLM_API_KEY');
-```
+1. Copy `.env.example` to `.env` and fill in `OPENAI_API_KEY=`.
+2. Run `fvm flutter run --dart-define-from-file=.env`.
 
-and document here how to provide it (e.g.
-`flutter run --dart-define=LLM_API_KEY=...`).
+There is a single environment, so there is no `env.dart`: the feature reads the key with
+`String.fromEnvironment('OPENAI_API_KEY')`. What the feature does and how to try each path is in
+[`docs/ai_companion/README.md`](docs/ai_companion/README.md).

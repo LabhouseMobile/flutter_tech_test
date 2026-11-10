@@ -27,11 +27,12 @@ lib/
   search/          Debounced iTunes search (SearchBloc)
   show_detail/     Show detail from the RSS feed (ShowDetailBloc, RssFeedService, RssFeedParser)
   player/          Audio playback (PlayerBloc over just_audio)
+    ai_companion/  Sub-feature: synced transcript, summary and chapters (planned, docs/ai_companion/)
   library/         Subscribed shows (LibraryCubit, app-scoped: the tab and SubscribeButton share it)
   home/            Bottom-nav shell
   router/          RouterBuilder: only lists each page's route(). Still in common/router/ (Known debt)
 test/              Mirrors lib/ (see Known debt)
-docs/impl_plans/   One plan per change, in the format under Workflow
+docs/<feature>/    plan/: one plan per change (NN_implementation_plan.md), in the format under Workflow
 docs/tasks/        technical_debt.md: known issues and their status (source of truth)
 ```
 
@@ -46,6 +47,7 @@ lib/<feature>/
   models/
   views/           <feature>_page.dart
   widgets/
+  <sub_feature>/   same anatomy, for a feature that only lives inside its parent's page
 ```
 
 ## Layers and DI
@@ -62,9 +64,14 @@ lib/<feature>/
     PlayerRepository`). The bloc depends on the repository. No pass-through class.
   - A feature whose repository sits over a shared service (discover, search over
     `ItunesSearchService`) or a service + parser (show_detail) uses a concrete repository, even if it
-    only forwards today.  
+    only forwards today.
 - A feature imports another feature only for its Page, to navigate. Other shared code follows the
   rule of three (Reuse before writing).
+- A sub-feature nested in its parent (`lib/player/ai_companion/`) may also import the parent's bloc,
+  state, models and widgets. Only its views and widgets read the parent bloc and add its events, never its
+  cubit, and never the parent's repository or services. The parent imports the sub-feature only for
+  its entry widget. That widget provides the sub-feature's own cubit, with the repository and
+  services only it uses, so the parent's `route()` doesn't build them.
 
 ## State management
 - Cubit by default. Use a Bloc only for (1) `bloc_concurrency` event transformers (see `SearchBloc`)
@@ -130,8 +137,8 @@ Stop and ask, don't infer from general Flutter knowledge, before:
 ## Workflow
 - Every new feature or refactor, and any bug fix that touches more than one of view, cubit/bloc,
   repository and service, or more than one feature, starts with a plan in
-  `docs/impl_plans/NN_<slug>.md` (NN = next free number) and waits for approval before code
-  changes. The plan format:
+  `docs/<feature>/plan/NN_implementation_plan.md` (NN = next free number in that feature) and
+  waits for approval before code changes. The plan format:
   ```
   # NN · <Title>: <one-line outcome>
 

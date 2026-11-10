@@ -1,4 +1,4 @@
-# 02 · Player refactor: only the seek bar rebuilds on position ticks, PlayerBloc over a PlayerRepository, errors reach the UI
+# 01 · Player refactor: only the seek bar rebuilds on position ticks, PlayerBloc over a PlayerRepository, errors reach the UI
 
 **Priority/Effort:** P2 · L  **Depends on:** none
 **Status:** applied

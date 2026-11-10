@@ -1,6 +1,6 @@
 ---
 name: feature-refactor
-description: Refactor one existing Cabina feature so it follows AGENTS.md. Removes over-abstraction and dead or unreachable code, reuses common/ and the packages already in pubspec.yaml, and fixes layer, naming and docs drift. It writes a plan in docs/impl_plans and stops for approval before touching code. Use it when asked to "refactor <feature>", "clean up <feature>", "simplify <feature>", "align <feature> with our patterns".
+description: Refactor one existing Cabina feature so it follows AGENTS.md. Removes over-abstraction and dead or unreachable code, reuses common/ and the packages already in pubspec.yaml, and fixes layer, naming and docs drift. It writes a plan in docs/<feature>/plan and stops for approval before touching code. Use it when asked to "refactor <feature>", "clean up <feature>", "simplify <feature>", "align <feature> with our patterns".
 ---
 
 # Feature Refactor
@@ -44,7 +44,7 @@ Each finding gets `file:line`, what is wrong, and the smallest fix. Apply these 
 Drop any finding you can't point to a line for.
 
 ## Phase 3: Plan, then stop
-Write `docs/impl_plans/NN_<feature>_refactor.md` in the plan format from `AGENTS.md` → Workflow,
+Write `docs/<feature>/plan/NN_implementation_plan.md` in the plan format from `AGENTS.md` → Workflow,
 with these refactor specifics:
 - Title: `# NN · <Feature> refactor: <one-line outcome>`.
 - Status: `draft`. Set it to `approved` when the user approves, and to `applied` after the last step.

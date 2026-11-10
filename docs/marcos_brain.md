@@ -67,5 +67,5 @@ The lines I change get the failing case first, then the possible options, so wha
 we modified. No getting lost in a sea of tests that look like they cover the change. The test checks
 the code; we don't bend the tests to match whatever the code does.
 
-That's why every plan in [`impl_plans/`](impl_plans/) has a **Tests first** section, and
+That's why every plan in `<feature>/plan/` has a **Tests first** section, and
 `AGENTS.md` asks for a test that fails without the change.
