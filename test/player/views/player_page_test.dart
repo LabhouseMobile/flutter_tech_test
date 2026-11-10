@@ -28,6 +28,7 @@ void main() {
       duration: Duration(minutes: 5),
     ),
     podcastTitle: 'Podcast Title',
+    feedUrl: 'https://example.com/feed.xml',
   );
 
   late _MockPlayerBloc bloc;

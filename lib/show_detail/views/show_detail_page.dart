@@ -153,6 +153,7 @@ class _DetailContent extends StatelessWidget {
             extra: PlayerArgs(
               episode: episode,
               podcastTitle: detail.title,
+              feedUrl: detail.feedUrl,
               artworkUrl: episode.imageUrl ?? detail.artworkUrl,
             ),
           ),

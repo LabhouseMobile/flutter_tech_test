@@ -7,12 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 /// Minimal RSS item. Pass `null` to omit a tag entirely.
 ///
 /// [title] and [enclosure] replace the default tags; pass `''` to omit them.
+/// [extra] is raw XML appended inside the item.
 String _item({
   required String guid,
   String? duration,
   String? pubDate,
   String? title,
   String? enclosure,
+  String extra = '',
 }) =>
     '''
 <item>
@@ -21,12 +23,15 @@ String _item({
   ${enclosure ?? '<enclosure url="https://example.com/$guid.mp3" type="audio/mpeg"/>'}
   ${duration == null ? '' : '<itunes:duration>$duration</itunes:duration>'}
   ${pubDate == null ? '' : '<pubDate>$pubDate</pubDate>'}
+  $extra
 </item>''';
 
 String _feed(List<String> items) =>
     '''
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<rss version="2.0"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>Historias del mas aca</title>
     <description>Un podcast de comedia donde cada semana exploramos...</description>
@@ -230,6 +235,93 @@ void main() {
       expect(
         detail.episodes.map((e) => e.guid),
         ['new', 'mid', 'old'],
+      );
+    });
+  });
+  group('RssFeedParser podcast:transcript', () {
+    test('GIVEN an item listing JSON, HTML and SRT transcripts '
+        'WHEN the feed is parsed '
+        'THEN transcriptUrl is the SRT one', () {
+      final detail = parser.parse(
+        _feed([
+          _item(
+            guid: 'ep',
+            extra: '''
+<podcast:transcript url="https://example.com/ep.json" type="application/json" />
+<podcast:transcript url="https://example.com/ep.html" type="text/html" />
+<podcast:transcript url="https://example.com/ep.srt" type="application/srt" language="en" rel="captions" />''',
+          ),
+        ]),
+        podcast,
+      );
+
+      expect(
+        detail.episodes.single.transcriptUrl,
+        'https://example.com/ep.srt',
+      );
+    });
+
+    test('GIVEN an item with only an HTML transcript '
+        'WHEN the feed is parsed '
+        'THEN transcriptUrl is null', () {
+      final detail = parser.parse(
+        _feed([
+          _item(
+            guid: 'ep',
+            extra:
+                '<podcast:transcript url="https://example.com/ep.html" '
+                'type="text/html" />',
+          ),
+        ]),
+        podcast,
+      );
+
+      expect(detail.episodes.single.transcriptUrl, isNull);
+    });
+  });
+
+  group('Episode equality', () {
+    test('GIVEN two episodes that differ only in descriptionHtml, imageUrl '
+        'or transcriptUrl '
+        'THEN they are not equal', () {
+      const episode = Episode(
+        guid: 'ep',
+        title: 'Episode',
+        audioUrl: 'https://example.com/ep.mp3',
+      );
+
+      expect(
+        episode,
+        isNot(
+          const Episode(
+            guid: 'ep',
+            title: 'Episode',
+            audioUrl: 'https://example.com/ep.mp3',
+            descriptionHtml: '<p>Notes</p>',
+          ),
+        ),
+      );
+      expect(
+        episode,
+        isNot(
+          const Episode(
+            guid: 'ep',
+            title: 'Episode',
+            audioUrl: 'https://example.com/ep.mp3',
+            imageUrl: 'https://example.com/ep.jpg',
+          ),
+        ),
+      );
+      expect(
+        episode,
+        isNot(
+          const Episode(
+            guid: 'ep',
+            title: 'Episode',
+            audioUrl: 'https://example.com/ep.mp3',
+            transcriptUrl: 'https://example.com/ep.srt',
+          ),
+        ),
       );
     });
   });

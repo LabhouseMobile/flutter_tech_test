@@ -1,7 +1,7 @@
 # 01 · AI Companion: a sheet in the player with the synced transcript, a summary and chapters, prepared on demand and cached per device
 
 **Priority/Effort:** P1 · L  **Depends on:** [`player/plan/01_implementation_plan.md`](../../player/plan/01_implementation_plan.md) (applied)
-**Status:** draft
+**Status:** approved
 **Commit draft(s):**
 1. `feat(show_detail): ✨ read the episode's RSS transcript link and pass the feed URL to the player.`
 2. `feat(common): ✨ post JSON, upload files and download capped bytes through ApiClient.`
@@ -211,8 +211,8 @@ Decisions.
 
 **Step 7: docs.**
 - `AGENTS.md`: project map line for `ai_companion/` (drop "planned").
-- `technical_debt.md`: line 54 → `Episode` done, `Podcast` open; line 79 without
-  `ApiException.isRateLimited`.
+- `technical_debt.md`: line 79 without `ApiException.isRateLimited`. (Line 54, `Episode` done,
+  landed with step 1.)
 
 ## Files
 - New, `lib/player/ai_companion/`: `cubit/ai_companion_{cubit,state}.dart`,
