@@ -1,37 +1,36 @@
-part of 'audio_player_bloc.dart';
+part of 'player_bloc.dart';
 
-class AudioPlayerState extends Equatable {
-  const AudioPlayerState({
+/// What the player screen shows. [errorMessage] is always set with
+/// [PlayerStatus.error] (open failed); otherwise it is a failed action, shown
+/// in a SnackBar.
+class PlayerState extends Equatable {
+  const PlayerState({
     this.status = PlayerStatus.idle,
     this.position = const PlayerPosition(),
     this.speed = PlaybackSpeed.x1,
-    this.args,
     this.errorMessage,
   });
 
   final PlayerStatus status;
   final PlayerPosition position;
   final PlaybackSpeed speed;
-  final PlayerArgs? args;
   final String? errorMessage;
 
-  AudioPlayerState copyWith({
+  PlayerState copyWith({
     PlayerStatus? status,
     PlayerPosition? position,
     PlaybackSpeed? speed,
-    PlayerArgs? args,
     String? errorMessage,
     bool clearError = false,
   }) {
-    return AudioPlayerState(
+    return PlayerState(
       status: status ?? this.status,
       position: position ?? this.position,
       speed: speed ?? this.speed,
-      args: args ?? this.args,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, position, speed, args, errorMessage];
+  List<Object?> get props => [status, position, speed, errorMessage];
 }

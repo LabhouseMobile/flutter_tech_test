@@ -26,7 +26,7 @@ lib/
   discover/        Featured grid + favourites (DiscoverCubit)
   search/          Debounced iTunes search (SearchBloc)
   show_detail/     Show detail from the RSS feed (ShowDetailBloc, RssFeedService, RssFeedParser)
-  player/          Audio playback (AudioPlayerBloc over just_audio)
+  player/          Audio playback (PlayerBloc over just_audio)
   library/         Subscribed shows (LibraryCubit, app-scoped: the tab and SubscribeButton share it)
   home/            Bottom-nav shell
   router/          RouterBuilder: only lists each page's route(). Still in common/router/ (Known debt)
@@ -69,7 +69,7 @@ lib/<feature>/
 ## State management
 - Cubit by default. Use a Bloc only for (1) `bloc_concurrency` event transformers (see `SearchBloc`)
   or (2) traceability across several event sources, such as UI plus external streams (see
-  `AudioPlayerBloc`).
+  `PlayerBloc`).
 - State is one `Equatable` class with every field in `props`, a
   `<Feature>Status { initial, loading, ready, error }` enum when it loads async data (the player
   mirrors the engine with `PlayerStatus`), and, with an `errorMessage`,
@@ -110,7 +110,6 @@ Full list, targets and status: `docs/tasks/technical_debt.md`.
 | `home/`          | Flat folder                                                                                                                                                          |
 | `common/router/` | `RouterBuilder` in `common/`, so `common/` imports every feature page. Target: `lib/router/`                                                                         |
 | `discover/`      | `DiscoverCubit` also owns favourites                                                                                                                                 |
-| `player/`        | `IPlayerService` + pass-through `AudioPlayerRepository`; `route()` builds the service inline; handlers without `try`; awaited `play()`; files named `audio_player_*` |
 | `show_detail/`   | `ShowDetailBloc` with a single event and no transformer                                                                                                              |
 | Shared code      | `Podcast`, `Episode`, `ShowGrid`/`ShowCard`, `PlayerArgs`, `SubscribeButton` live in a feature but are used by others; `ItunesSearchService` imports discover        |
 | DI               | Repositories of route-scoped blocs registered app-scoped                                                                                                             |

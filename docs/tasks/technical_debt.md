@@ -6,12 +6,15 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 
 ## Player
 - ❌ Playback scoped to `PlayerPage`. Needs one app-wide player, a "Now Playing" mini-player above the bottom nav and native media controls
-- ✅ Going back from a podcast kept it playing → audio disposed on `AudioPlayerBloc.close`
-- ❌ `await play()` never completes, it resolves when playback stops
-- ❌ Play button on detail sometimes failing, probably the `await play()`
-- ❌ Play/pause/seek/speed errors only logged, UI not updated. Handlers without `try`, only `open` maps to `CabinaPlayerException`
-- ❌ `PlayerPage.route()` builds `AudioPlayerRepository(service: JustAudioPlayerService())` inline, no injection → refactor `PlayerPage` to the standard
-- ❌ `IPlayerService` + pass-through `AudioPlayerRepository`, `I` prefix, files named `audio_player_*` → `PlayerRepository` implemented by `JustAudioPlayerService`, files `player_*`
+- ✅ Going back from a podcast kept it playing → audio disposed on `PlayerBloc.close`
+- ✅ `await play()` never completes, it resolves when playback stops → `PlayerBloc` starts playback unawaited, a failure comes back as a private `_PlayerFailed` event
+- ✅ Play button on detail sometimes failing, probably the `await play()` → `play()` no longer awaited and its failures reach the UI.
+- ✅ Play/pause/seek/speed errors only logged, UI not updated. Handlers without `try`, only `open` maps to `CabinaPlayerException` → every handler has a `try`, the service maps every engine call, the page shows a SnackBar
+- ✅ `PlayerPage.route()` builds `AudioPlayerRepository(service: JustAudioPlayerService())` inline, no injection → `PlayerBloc(repository: JustAudioPlayerService())`, the standard for a route-scoped bloc
+- ✅ `IPlayerService` + pass-through `AudioPlayerRepository`, `I` prefix, files named `audio_player_*` → `PlayerRepository` implemented by `JustAudioPlayerService`, `PlayerBloc` in `player_*` files
+- ✅ Whole player screen rebuilt on every 200 ms position tick → each widget selects its own slice, only `SeekBar` rebuilds on a tick
+- ✅ Dragging the seek bar sent a seek per frame and the thumb jumped back under the finger → one seek on release
+- ✅ `+30 s` could seek past the end → clamped to the episode length
 - ❌ `audio_session` declared, not configured 
 
 ## Library
@@ -37,7 +40,7 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 - ❌ No retry and no clear button
 
 ## Show detail
-- ❌ Detail page rebuilt on every podcast change
+- ✅ Detail page rebuilt on every podcast change → the page rebuilds only when `ShowDetailState` changes; `SubscribeButton` selects its own slice of `LibraryCubit`
 - ❌ Podcast without episodes shows only the header + "0 episodes", no empty view
 - ✅ One broken item failed the whole feed → bad items skipped (`RssFeedParser`, `ItunesSearchService._tryParse`)
 - ✅ Episodes sorted newest first
@@ -71,10 +74,10 @@ Source of truth for known issues. One line each, `file:line` when it helps.
 
 ## Code & tests
 - 🟡 Missing docs across the app. New classes documented, many old ones still without `///`
-- 🟡 Wildcards for unused params. `PosterImage` done, DI and pages still use `ctx`/`context`
+- 🟡 Wildcards for unused params. `PosterImage` and `PlayerPage` done, DI and other pages still use `ctx`/`context`
 - ❌ Private named params (`required this._repository`) not adopted
-- 🟡 Dead code. `hive` and `cupertino_icons` removed. `DiscoverRepository.search`, `ApiClient.dispose`, `PlayerPosition.progress` and `ApiException.isRateLimited` still unused
-- ❌ Bloc and cubit tests at the feature root, not under `bloc/` or `cubit/`
-- ❌ Hardcoded colors outside the theme: `show_card.dart:46,50`, `player_controls.dart:77`
+- 🟡 Dead code. `hive` and `cupertino_icons` removed. `DiscoverRepository.search`, `ApiClient.dispose` and `ApiException.isRateLimited` still unused
+- 🟡 Bloc and cubit tests at the feature root, not under `bloc/` or `cubit/`. Library and player moved
+- ❌ Hardcoded colors outside the theme: `show_card.dart:46,50`
 - ❌ `uuid` declared but unused, for an upcoming feature. Don't remove
 - ✅ No l10n. English only, by decision
